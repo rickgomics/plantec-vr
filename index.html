@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v18</p>
+  <p id="vstamp">v19</p>
 </div>
 
 </div>
@@ -765,6 +765,15 @@ AFRAME.registerComponent('narr-toggle', {
   setTimeout(function(){clearInterval(iv);finish();},20000);
 })();
 // error overlay: mostra qualquer erro JS na tela
+window.addEventListener('unhandledrejection', function(ev){
+  try{
+    var el=document.getElementById('errbox');
+    if(!el){ el=document.createElement('div'); el.id='errbox';
+      el.style.cssText='position:fixed;bottom:90px;left:8px;right:8px;z-index:99999;background:rgba(120,0,0,.85);color:#fff;font:12px monospace;padding:8px 10px;border-radius:8px;max-height:30vh;overflow:auto;';
+      document.body.appendChild(el); }
+    var r=ev.reason; el.textContent += 'Promise: ' + (r && r.message ? r.message : String(r)) + '\n';
+  }catch(e){}
+});
 window.addEventListener('error', function(ev){
   try{
     var el=document.getElementById('errbox');
@@ -824,6 +833,15 @@ window.addEventListener('error', function(ev){
     default: "preset: goaland; seed: 9; ground: canyon; groundYScale: 6; groundColor: #133c38; groundColor2: #0a201e; dressing: stones; dressingAmount: 70; dressingColor: #F5A800; dressingScale: 4; dressingVariance: 15 6 15; grid: crosses; gridColor: #00A99D; fog: 0.35; skyType: gradient; skyColor: #101024; horizonColor: #3b2a66"
   };
   var current = 'auditorio';
+  function setPillLabel(theme, label){
+    document.querySelectorAll('.tpill').forEach(function(p){
+      var tp = p.getAttribute('theme-pick');
+      var pn = (tp && tp.name) ? tp.name : String(tp||'').replace('name:','').trim();
+      if(pn===theme){
+        var t=p.querySelector('[text]'); if(t) t.setAttribute('text','value',label);
+      }
+    });
+  }
   function apply(name){
     var SPECIAL = { real: 'photosky', auditorio: 'auditorium', sponza: 'sponzaenv' };
     if(!SPECIAL[name] && !THEMES[name]) return;
@@ -836,7 +854,14 @@ window.addEventListener('error', function(ev){
       if(name==='sponza'){
         var holder=document.getElementById('sponzamodel');
         if(holder && !holder.getAttribute('gltf-model')){
-          holder.setAttribute('gltf-model','url(assets/sponza/Sponza.gltf)');
+          setPillLabel('sponza','Carregando\u2026');
+          holder.addEventListener('model-loaded', function(){ setPillLabel('sponza','Palacio (foto-real)'); }, {once:true});
+          holder.addEventListener('model-error', function(){
+            setPillLabel('sponza','Palacio indisponivel');
+            apply('auditorio');
+          }, {once:true});
+          try{ holder.setAttribute('gltf-model','url(assets/sponza/Sponza.gltf)'); }
+          catch(e){ setPillLabel('sponza','Palacio indisponivel'); apply('auditorio'); }
         }
       }
     } else {
