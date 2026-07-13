@@ -52,7 +52,7 @@
 <div id="boot">
   <h1>PLANTEC <span class="g">·</span> INSTITUCIONAL 2026</h1>
   <p>Preparando a experiência imersiva…</p>
-  <p style="font-size:11px;opacity:.5;">56 painéis · WebXR · <b style="color:#00d16a">v9</b></p>
+  <p style="font-size:11px;opacity:.5;">56 painéis · WebXR · <b style="color:#00d16a">v7</b></p>
   <div id="bar"><i></i></div>
 </div>
 
@@ -158,7 +158,7 @@
   <a-sky id="photosky" src="#pano360" visible="false" rotation="0 -60 0"></a-sky>
 
   <!-- Virtual world environment (VR) -->
-  <a-entity id="env" environment="preset: starry; seed: 12; ground: hills; groundYScale: 8; groundColor: #0c2a1e; groundColor2: #06140e; groundTexture: walkernoise; dressing: towers; dressingAmount: 60; dressingColor: #0e3b2a; dressingScale: 6; dressingVariance: 12 6 12; grid: dots; gridColor: #00a651; fog: 0.65; skyType: atmosphere; lightPosition: 0.4 0.06 -1"></a-entity>
+  <a-entity id="env" environment="preset: starry; seed: 12; ground: hills; groundYScale: 8; groundColor: #123c2b; groundColor2: #0a241a; groundTexture: walkernoise; dressing: towers; dressingAmount: 70; dressingColor: #19d47f; dressingScale: 6; dressingVariance: 14 8 14; grid: dots; gridColor: #00d16a; fog: 0.6; skyType: atmosphere; lightPosition: 0.6 0.35 -1"></a-entity>
 
   <!-- Floating particles (fireflies) -->
   <a-entity id="fx">
@@ -227,6 +227,17 @@
   <a-plane id="p-r1" geometry="width: 3.4; height: 1.9125" material="shader: flat; transparent: true; side: double" visible="false"></a-plane>
   <a-plane id="p-r2" geometry="width: 3.4; height: 1.9125" material="shader: flat; transparent: true; side: double" visible="false"></a-plane>
   <a-plane id="p-c"  geometry="width: 3.4; height: 1.9125" material="shader: flat; transparent: true; side: double" visible="false"></a-plane>
+
+  <!-- Menu de cenarios dentro do VR -->
+  <a-entity id="thememenu" position="-3.4 2.15 -2.6" rotation="0 38 0">
+    <a-entity text="value: CENARIO; align: center; color: #8affc8; width: 3.2; font: dejavu" position="0 0.62 0"></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: real"    position="0 0.30 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #0b3d2b; opacity: 0.92"><a-entity text="value: Montanha (real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: starry"  position="0 0.00 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #0b3d2b; opacity: 0.92"><a-entity text="value: Espaco; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: tron"    position="0 -0.30 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #0b3d2b; opacity: 0.92"><a-entity text="value: Tron; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: dream"   position="0 -0.60 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #0b3d2b; opacity: 0.92"><a-entity text="value: Sonho; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: forest"  position="0 -0.90 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #0b3d2b; opacity: 0.92"><a-entity text="value: Floresta; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: default" position="0 -1.20 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #0b3d2b; opacity: 0.92"><a-entity text="value: Canion; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+  </a-entity>
 
   <!-- 3D clickable arrows (mesh + handler on same entity) -->
   <a-entity arrow-btn="dir: prev" class="clickable" position="-2.05 0.6 -3"
@@ -501,6 +512,20 @@ AFRAME.registerComponent('height-fix', {
     }
   };
 })();
+
+// ---------- In-VR theme pick ----------
+AFRAME.registerComponent('theme-pick', {
+  schema: { name: {type:'string'} },
+  init: function () {
+    var self = this;
+    this.el.addEventListener('click', function () {
+      if (window.SET_THEME) window.SET_THEME(self.data.name);
+      if (window.AUDIO) window.AUDIO.whoosh(1);
+    });
+    this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.08 1.08 1.08'); });
+    this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
+  }
+});
 </script>
 <script>
 // boot progress + fade
@@ -534,6 +559,7 @@ window.addEventListener('error', function(ev){
 <script>
 (function(){
   window.APPLY_THEME = function(){ apply(current); };
+  window.SET_THEME = apply;
   var sc = document.querySelector('a-scene');
   var arBtn = document.getElementById('btn-ar');
   var vrBtn = document.getElementById('btn-vr');
@@ -578,11 +604,11 @@ window.addEventListener('error', function(ev){
 <script>
 (function(){
   var THEMES = {
-    starry:  "preset: starry; seed: 12; ground: hills; groundYScale: 8; groundColor: #0c2a1e; groundColor2: #06140e; groundTexture: walkernoise; dressing: towers; dressingAmount: 60; dressingColor: #0e3b2a; dressingScale: 6; dressingVariance: 12 6 12; grid: dots; gridColor: #00a651; fog: 0.65; skyType: atmosphere; lightPosition: 0.4 0.06 -1",
-    tron:    "preset: tron; seed: 7; ground: spikes; groundYScale: 10; groundColor: #041a12; groundColor2: #020d09; dressing: cylinders; dressingAmount: 80; dressingColor: #00e676; dressingScale: 4; dressingVariance: 10 14 10; grid: 1x1; gridColor: #00e676; fog: 0.5; skyType: gradient; skyColor: #01060d; horizonColor: #003b26",
-    dream:   "preset: dream; seed: 21; ground: hills; groundYScale: 6; dressing: torii; dressingAmount: 25; dressingColor: #ff5f8f; dressingScale: 8; dressingVariance: 14 4 14; fog: 0.45",
-    forest:  "preset: forest; seed: 5; ground: hills; groundYScale: 5; dressing: trees; dressingAmount: 120; dressingScale: 3; dressingVariance: 12 6 12; grid: none; fog: 0.35",
-    default: "preset: goaland; seed: 9; ground: canyon; groundYScale: 14; groundColor: #0a2a1e; groundColor2: #061a12; dressing: stones; dressingAmount: 70; dressingColor: #114d36; dressingScale: 5; dressingVariance: 16 8 16; grid: crosses; gridColor: #00a651; fog: 0.4; skyType: gradient; skyColor: #06121a; horizonColor: #0a3a2a"
+    starry:  "preset: starry; seed: 12; ground: hills; groundYScale: 8; groundColor: #123c2b; groundColor2: #0a241a; groundTexture: walkernoise; dressing: towers; dressingAmount: 70; dressingColor: #19d47f; dressingScale: 6; dressingVariance: 14 8 14; grid: dots; gridColor: #00d16a; fog: 0.6; skyType: atmosphere; lightPosition: 0.6 0.35 -1",
+    tron:    "preset: tron; seed: 7; ground: spikes; groundYScale: 10; groundColor: #06281c; groundColor2: #03140e; dressing: cylinders; dressingAmount: 90; dressingColor: #00ff88; dressingScale: 4; dressingVariance: 10 16 10; grid: 1x1; gridColor: #00ff88; fog: 0.45; skyType: gradient; skyColor: #02101c; horizonColor: #00593a; flatShading: true",
+    dream:   "preset: dream; seed: 21; ground: hills; groundYScale: 6; dressing: torii; dressingAmount: 30; dressingColor: #ff5f8f; dressingScale: 9; dressingVariance: 16 4 16; fog: 0.4",
+    forest:  "preset: forest; seed: 5; ground: hills; groundYScale: 5; dressing: trees; dressingAmount: 110; dressingScale: 4; dressingVariance: 14 6 14; grid: none; fog: 0.3",
+    default: "preset: goaland; seed: 9; ground: canyon; groundYScale: 14; groundColor: #14503a; groundColor2: #0a2c20; dressing: stones; dressingAmount: 80; dressingColor: #2fe3a0; dressingScale: 5; dressingVariance: 18 8 18; grid: crosses; gridColor: #00d16a; fog: 0.35; skyType: gradient; skyColor: #0a2030; horizonColor: #14684a"
   };
   var current = 'starry';
   function apply(name){
@@ -602,6 +628,10 @@ window.addEventListener('error', function(ev){
       }
     }
     document.querySelectorAll('.tbtn').forEach(function(x){ x.classList.toggle('active', x.getAttribute('data-theme')===name); });
+    document.querySelectorAll('.tpill').forEach(function(p){
+      var pn = (p.getAttribute('theme-pick')||'').replace('name:','').trim();
+      p.setAttribute('material', 'color', pn===name ? '#00a651' : '#0b3d2b');
+    });
   }
   document.querySelectorAll('.tbtn').forEach(function(x){
     x.addEventListener('click', function(){ apply(x.getAttribute('data-theme')); });
