@@ -47,7 +47,7 @@
 <div id="boot">
   <h1>PLANTEC <span class="g">·</span> INSTITUCIONAL 2026</h1>
   <p>Preparando a experiência imersiva…</p>
-  <p style="font-size:11px;opacity:.5;">56 painéis · WebXR · <b style="color:#00d16a">v12</b></p>
+  <p style="font-size:11px;opacity:.5;">56 painéis · WebXR · <b style="color:#00d16a">v13</b></p>
   <div id="bar"><i></i></div>
 </div>
 
@@ -609,10 +609,6 @@ window.addEventListener('error', function(ev){
 </script>
 <script>
 (function(){
-  window.APPLY_THEME = function(){ apply(current); };
-  window.SET_THEME = apply;
-  var ORDER = ['real','starry','tron','dream','forest','default'];
-  window.CYCLE_THEME = function(){ apply(ORDER[(ORDER.indexOf(current)+1) % ORDER.length]); };
   var sc = document.querySelector('a-scene');
   var vrBtn = document.getElementById('btn-vr');
   var status = document.getElementById('xrstatus');
@@ -682,6 +678,10 @@ window.addEventListener('error', function(ev){
       p.setAttribute('material', 'color', pn===name ? '#00A99D' : '#221033');
     });
   }
+  window.APPLY_THEME = function(){ apply(current); };
+  window.SET_THEME = apply;
+  var ORDER = ['real','starry','tron','dream','forest','default'];
+  window.CYCLE_THEME = function(){ apply(ORDER[(ORDER.indexOf(current)+1) % ORDER.length]); };
   var sc = document.querySelector('a-scene');
   if(sc){
     if(sc.hasLoaded){ apply(current); }
