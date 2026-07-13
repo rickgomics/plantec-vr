@@ -9,14 +9,10 @@
   html,body{margin:0;height:100%;background:#0a0812;overflow:hidden;font-family:'Montserrat',system-ui,sans-serif;}
   #boot{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;
         background:radial-gradient(circle at 50% 40%,#231133 0%,#0a0812 70%);color:#e8fff4;transition:opacity .6s;}
-  #boot h1{font-size:26px;font-weight:800;letter-spacing:.5px;margin:0 0 6px;color:#fff;}
-  #boot .g{color:#F5A800;}
-  #boot p{opacity:.7;font-size:13px;margin:2px 0;}
-  #bar{width:220px;height:5px;background:#241a2e;border-radius:4px;margin-top:16px;overflow:hidden;}
+      #boot{gap:18px;} #vstamp{opacity:.45;font-size:11px;color:#fff;margin:0;}
+  #bar{width:min(60vw,300px);height:6px;background:#241a2e;border-radius:4px;margin-top:16px;overflow:hidden;}
   #bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#A21585,#00A99D,#F5A800);transition:width .2s;}
-  #xrbar{position:fixed;left:0;right:0;top:50%;transform:translateY(-50%);z-index:60;display:flex;
-       flex-direction:column;align-items:center;gap:12px;pointer-events:none;}
-  #xrbar button{pointer-events:auto;font-family:inherit;font-weight:800;letter-spacing:.5px;cursor:pointer;
+  #boot button{pointer-events:auto;font-family:inherit;font-weight:800;letter-spacing:.5px;cursor:pointer;
        border-radius:14px;padding:16px 26px;font-size:15px;backdrop-filter:blur(8px);transition:.15s;}
   #btn-vr{background:linear-gradient(90deg,#A21585,#00A99D);color:#fff;border:none;box-shadow:0 10px 34px rgba(162,21,133,.4);}
   #landlogo{pointer-events:none;width:min(66vw,400px);filter:drop-shadow(0 6px 24px rgba(0,0,0,.5));}
@@ -24,7 +20,7 @@
   #btn-vr:active{transform:scale(.97);}
   #xrstatus{pointer-events:none;color:#e8d5f0;font-size:12px;opacity:.85;max-width:280px;text-align:center;line-height:1.5;
        background:rgba(3,20,16,.5);padding:8px 12px;border-radius:10px;}
-  #xrbar button[disabled]{opacity:.35;cursor:not-allowed;}
+  #boot button[disabled]{opacity:.35;cursor:not-allowed;}
   /* 2D HUD for phone / desktop */
   #hud{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;align-items:center;justify-content:center;gap:14px;
        padding:12px;pointer-events:none;}
@@ -45,17 +41,13 @@
 </head>
 <body>
 <div id="boot">
-  <h1>PLANTEC <span class="g">·</span> INSTITUCIONAL 2026</h1>
-  <p>Preparando a experiência imersiva…</p>
-  <p style="font-size:11px;opacity:.5;">56 painéis · WebXR · <b style="color:#00d16a">v13</b></p>
+  <img id="landlogo" src="assets/logo.png" alt="Plantec">
   <div id="bar"><i></i></div>
+  <button id="btn-vr" disabled>CARREGANDO…</button>
+  <div id="xrstatus"></div>
+  <p id="vstamp">v14</p>
 </div>
 
-<div id="xrbar">
-  <img id="landlogo" src="assets/logo.png" alt="Plantec">
-  <div id="landtitle">Institucional 2026 · Experiência Imersiva</div>
-  <button id="btn-vr">ENTRAR EM VR</button>
-  <div id="xrstatus"></div>
 </div>
 <div id="hud">
   <button onclick="window.DECK&&window.DECK.prev()">‹</button>
@@ -128,7 +120,7 @@
 <img id="img54" src="assets/s-55.jpg" crossorigin="anonymous">
 <img id="img55" src="assets/s-56.jpg" crossorigin="anonymous">
 <img id="pano360" src="assets/pano.jpg" crossorigin="anonymous">
-<img id="logoimg" src="assets/wordmark.png" crossorigin="anonymous">
+<img id="logoimg" src="assets/logo.png" crossorigin="anonymous">
   </a-assets>
 
   <!-- Lighting -->
@@ -141,7 +133,7 @@
   <a-sky id="photosky" src="#pano360" visible="false" rotation="0 -60 0"></a-sky>
 
   <!-- Virtual world environment (VR) -->
-  <a-entity id="env" environment="preset: starry; seed: 12; ground: hills; groundYScale: 8; groundColor: #241640; groundColor2: #120b22; groundTexture: walkernoise; dressing: towers; dressingAmount: 70; dressingColor: #00A99D; dressingScale: 6; dressingVariance: 14 8 14; grid: dots; gridColor: #F5A800; fog: 0.6; skyType: atmosphere; lightPosition: 0.6 0.35 -1"></a-entity>
+  <a-entity id="env" environment="preset: starry; seed: 12; ground: hills; groundYScale: 3; groundColor: #241640; groundColor2: #120b22; groundTexture: walkernoise; dressing: towers; dressingAmount: 60; dressingColor: #00A99D; dressingScale: 4; dressingVariance: 12 5 12; grid: dots; gridColor: #F5A800; fog: 0.6; skyType: atmosphere; lightPosition: 0.6 0.35 -1"></a-entity>
 
   <!-- Floating particles (fireflies) -->
   <a-entity id="fx">
@@ -201,12 +193,9 @@
   <!-- Title text -->
   <a-entity id="counter" text="value: 1 / 56; align: center; color: #FFD37A; width: 5; font: dejavu"
      position="0 3.15 -3.25"></a-entity>
-  <a-entity position="0 3.62 -3.3"
-     animation="property: position; from: 0 3.56 -3.3; to: 0 3.68 -3.3; dir: alternate; dur: 3600; loop: true; easing: easeInOutSine">
-    <a-entity position="-1.45 0 0" animation="property: rotation; to: 0 360 0; dur: 14000; loop: true; easing: linear">
-      <a-entity plantec-cube rotation="35 0 45"></a-entity>
-    </a-entity>
-    <a-image src="#logoimg" position="0.5 0 0" width="2.3" height="0.358" material="transparent: true; alphaTest: 0.05"></a-image>
+  <a-entity position="0 3.6 -3.3">
+    <a-image src="#logoimg" width="2.6" height="0.592" material="transparent: true; alphaTest: 0.05"
+       animation="property: position; from: 0 -0.06 0; to: 0 0.06 0; dir: alternate; dur: 3400; loop: true; easing: easeInOutSine"></a-image>
   </a-entity>
 
   <!-- Slide panels (carousel window of 5) -->
@@ -582,19 +571,25 @@ AFRAME.registerComponent('plantec-cube', {
 <script>
 // boot progress + fade
 (function(){
-  var bar=document.querySelector('#bar i');var boot=document.getElementById('boot');
-  function hideBoot(){ if(!boot) return; boot.style.opacity=0; setTimeout(function(){boot.style.display='none';},650); }
+  var bar=document.querySelector('#bar i');
+  var btn=document.getElementById('btn-vr');
+  function ready(){
+    if(btn && btn.disabled && window.__vrAllowed!==false){
+      btn.disabled=false; btn.textContent='ENTRAR EM VR';
+    }
+    if(bar) bar.style.width='100%';
+  }
   var imgs=document.querySelectorAll('a-assets img');var total=imgs.length||1,done=0;
   imgs.forEach(function(im){
     if(im.complete){done++;}
     else { im.addEventListener('load',function(){done++;}); im.addEventListener('error',function(){done++;}); }
   });
   var iv=setInterval(function(){
-    bar.style.width=Math.min(100,(done/total*100))+'%';
-    if(done>=total){clearInterval(iv);setTimeout(hideBoot,400);}
+    if(bar) bar.style.width=Math.min(100,(done/total*100))+'%';
+    if(done>=total){clearInterval(iv);ready();}
   },150);
-  // failsafe: nunca ficar preso na tela de carregamento
-  setTimeout(function(){clearInterval(iv);hideBoot();},20000);
+  setTimeout(function(){clearInterval(iv);ready();},20000); // failsafe
+  window.__bootReadyCheck = ready;
 })();
 // error overlay: mostra qualquer erro JS na tela
 window.addEventListener('error', function(ev){
@@ -623,25 +618,24 @@ window.addEventListener('error', function(ev){
   vrBtn.addEventListener('click', function(){ if(window.AUDIO) window.AUDIO.start(); enter(false); });
   // hide entry UI once a session starts / show again on exit
   if(sc){
-    sc.addEventListener('enter-vr', function(){ var x=document.getElementById('xrbar'); if(x) x.style.display='none'; });
-    sc.addEventListener('exit-vr',  function(){ var x=document.getElementById('xrbar'); if(x) x.style.display='flex'; });
+    sc.addEventListener('enter-vr', function(){ var x=document.getElementById('boot'); if(x) x.style.display='none'; });
+    sc.addEventListener('exit-vr',  function(){ var x=document.getElementById('boot'); if(x) x.style.display='flex'; });
   }
   // feature detection
   if(!navigator.xr){
     hide(vrBtn);
-    status.textContent = 'Este navegador não tem WebXR. Abra no navegador do Meta Quest para AR/VR. (No desktop/celular você já pode explorar a cena em 3D.)';
+    window.__vrAllowed=false; status.textContent = 'Abra no navegador do Meta Quest para VR. Aqui dá para explorar em 3D pela tela.';
     return;
   }
-  vrBtn.disabled = true;
-  status.textContent = 'Verificando suporte do dispositivo...';
+  status.textContent = '';
   Promise.allSettled([
     navigator.xr.isSessionSupported('immersive-ar'),
     navigator.xr.isSessionSupported('immersive-vr')
   ]).then(function(res){
     var arOk = res[0].status==='fulfilled' && res[0].value;
     var vrOk = res[1].status==='fulfilled' && res[1].value;
-    if(vrOk){ vrBtn.disabled=false; } else { hide(vrBtn); }
-    if(vrOk){ status.textContent='Coloque o headset e toque em ENTRAR EM VR.'; }
+    if(!vrOk){ window.__vrAllowed=false; hide(vrBtn); } else { if(window.__bootReadyCheck) window.__bootReadyCheck(); }
+    if(!vrOk){ status.textContent='Dispositivo sem VR imersivo — explore em 3D pela tela.'; }
     else { status.textContent='Dispositivo sem suporte a AR/VR imersivo. Explore a cena em 3D pela tela.'; }
   });
 })();
@@ -649,11 +643,11 @@ window.addEventListener('error', function(ev){
 <script>
 (function(){
   var THEMES = {
-    starry:  "preset: starry; seed: 12; ground: hills; groundYScale: 8; groundColor: #241640; groundColor2: #120b22; groundTexture: walkernoise; dressing: towers; dressingAmount: 70; dressingColor: #00A99D; dressingScale: 6; dressingVariance: 14 8 14; grid: dots; gridColor: #F5A800; fog: 0.6; skyType: atmosphere; lightPosition: 0.6 0.35 -1",
-    tron:    "preset: tron; seed: 7; ground: spikes; groundYScale: 10; groundColor: #140a2e; groundColor2: #0a0518; dressing: cylinders; dressingAmount: 90; dressingColor: #00E5D0; dressingScale: 4; dressingVariance: 10 16 10; grid: 1x1; gridColor: #F5A800; fog: 0.45; skyType: gradient; skyColor: #0a0618; horizonColor: #5a1266; flatShading: true",
-    dream:   "preset: dream; seed: 21; ground: hills; groundYScale: 6; dressing: torii; dressingAmount: 30; dressingColor: #E0389F; dressingScale: 9; dressingVariance: 16 4 16; fog: 0.4",
-    forest:  "preset: forest; seed: 5; ground: hills; groundYScale: 5; dressing: trees; dressingAmount: 110; dressingScale: 4; dressingVariance: 14 6 14; grid: none; fog: 0.3",
-    default: "preset: goaland; seed: 9; ground: canyon; groundYScale: 14; groundColor: #133c38; groundColor2: #0a201e; dressing: stones; dressingAmount: 80; dressingColor: #F5A800; dressingScale: 5; dressingVariance: 18 8 18; grid: crosses; gridColor: #00A99D; fog: 0.35; skyType: gradient; skyColor: #101024; horizonColor: #3b2a66"
+    starry:  "preset: starry; seed: 12; ground: hills; groundYScale: 3; groundColor: #241640; groundColor2: #120b22; groundTexture: walkernoise; dressing: towers; dressingAmount: 60; dressingColor: #00A99D; dressingScale: 4; dressingVariance: 12 5 12; grid: dots; gridColor: #F5A800; fog: 0.6; skyType: atmosphere; lightPosition: 0.6 0.35 -1",
+    tron:    "preset: tron; seed: 7; ground: hills; groundYScale: 3; groundColor: #140a2e; groundColor2: #0a0518; dressing: cylinders; dressingAmount: 60; dressingColor: #00E5D0; dressingScale: 3; dressingVariance: 9 8 9; grid: 1x1; gridColor: #F5A800; fog: 0.45; skyType: gradient; skyColor: #0a0618; horizonColor: #5a1266",
+    dream:   "preset: dream; seed: 21; ground: hills; groundYScale: 3; dressing: torii; dressingAmount: 25; dressingColor: #E0389F; dressingScale: 7; dressingVariance: 14 3 14; fog: 0.4",
+    forest:  "preset: forest; seed: 5; ground: hills; groundYScale: 2.5; dressing: trees; dressingAmount: 100; dressingScale: 3; dressingVariance: 12 4 12; grid: none; fog: 0.3",
+    default: "preset: goaland; seed: 9; ground: canyon; groundYScale: 6; groundColor: #133c38; groundColor2: #0a201e; dressing: stones; dressingAmount: 70; dressingColor: #F5A800; dressingScale: 4; dressingVariance: 15 6 15; grid: crosses; gridColor: #00A99D; fog: 0.35; skyType: gradient; skyColor: #101024; horizonColor: #3b2a66"
   };
   var current = 'starry';
   function apply(name){
@@ -668,8 +662,10 @@ window.addEventListener('error', function(ev){
       if(sky) sky.setAttribute('visible', false);
       if(env){
         env.setAttribute('visible', true);
-        if(env.hasLoaded){ env.setAttribute('environment', THEMES[name]); }
-        else { env.addEventListener('loaded', function(){ env.setAttribute('environment', THEMES[current]); }, {once:true}); }
+        try{
+          if(env.hasLoaded){ env.setAttribute('environment', THEMES[name]); }
+          else { env.addEventListener('loaded', function(){ try{ env.setAttribute('environment', THEMES[current]); }catch(e){} }, {once:true}); }
+        }catch(e){ if(window.console) console.warn('tema falhou', name, e); }
       }
     }
     document.querySelectorAll('.tpill').forEach(function(p){
