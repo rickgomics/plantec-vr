@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v23</p>
+  <p id="vstamp">v24</p>
 </div>
 
 </div>
@@ -866,17 +866,36 @@ window.addEventListener('error', function(ev){
     var IMGS = { real:'pano360', salao:'skysalao', praca:'skypraca', metro:'skymetro', aeroporto:'skyaero' };
     var dbg = document.getElementById('dbg');
     var shown = groups[SPECIAL[name]];
-    if(shown && IMGS[name]){
-      var im = document.getElementById(IMGS[name]);
-      try{
-        shown.setAttribute('material', 'src', '#'+IMGS[name]);
-        var mesh = shown.getObject3D('mesh');
-        if(mesh && mesh.material){
-          if(mesh.material.map) mesh.material.map.needsUpdate = true;
+    function bindSkyTexture(skyEl, imgId, themeName){
+      var im = document.getElementById(imgId);
+      if(!im){ if(dbg) dbg.setAttribute('text','value', themeName+' | img NAO ACHADA'); return; }
+      function doBind(){
+        try{
+          var mesh = skyEl.getObject3D('mesh');
+          if(!mesh || !mesh.material){
+            skyEl.addEventListener('loaded', doBind, {once:true});
+            return;
+          }
+          var T = AFRAME.THREE;
+          if(!skyEl.__texSrc || skyEl.__texSrc !== imgId){
+            var tex = new T.Texture(im);
+            if(T.SRGBColorSpace !== undefined) tex.colorSpace = T.SRGBColorSpace;
+            else if(T.sRGBEncoding !== undefined) tex.encoding = T.sRGBEncoding;
+            tex.needsUpdate = true;
+            if(skyEl.__tex && skyEl.__tex.dispose) skyEl.__tex.dispose();
+            skyEl.__tex = tex; skyEl.__texSrc = imgId;
+          }
+          mesh.material.map = skyEl.__tex;
+          if(mesh.material.color) mesh.material.color.set('#ffffff');
           mesh.material.needsUpdate = true;
-        }
-        if(dbg) dbg.setAttribute('text','value', name+' | img '+(im?(im.naturalWidth+'x'+im.naturalHeight+(im.complete?' ok':' carregando')):'NAO ACHADA')+' | mesh '+(mesh?'ok':'null'));
-      }catch(e){ if(dbg) dbg.setAttribute('text','value', name+' | ERRO: '+e.message); }
+          if(dbg) dbg.setAttribute('text','value', themeName+' | tex '+im.naturalWidth+'x'+im.naturalHeight+' aplicada');
+        }catch(e){ if(dbg) dbg.setAttribute('text','value', themeName+' | ERRO: '+e.message); }
+      }
+      if(im.complete && im.naturalWidth>0){ doBind(); }
+      else { im.addEventListener('load', doBind, {once:true}); if(dbg) dbg.setAttribute('text','value', themeName+' | aguardando img'); }
+    }
+    if(shown && IMGS[name]){
+      bindSkyTexture(shown, IMGS[name], name);
     } else if(dbg){ dbg.setAttribute('text','value', name); }
     if(SPECIAL[name]){
       if(env) env.setAttribute('visible', false);
