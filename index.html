@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v22</p>
+  <p id="vstamp">v23</p>
 </div>
 
 </div>
@@ -199,6 +199,7 @@
       animation="property: position; to: 4.74 1.88 -6.91; dir: alternate; dur: 2950; loop: true; easing: easeInOutSine"></a-sphere>
   </a-entity>
   <!-- Title text -->
+  <a-entity id="dbg" text="value: ; align: center; color: #ffd166; width: 4; font: dejavu" position="0 2.88 -3.25"></a-entity>
   <a-entity id="counter" text="value: 1 / 56; align: center; color: #FFD37A; width: 5; font: dejavu"
      position="0 3.15 -3.25"></a-entity>
   <a-entity position="0 3.6 -3.3">
@@ -862,6 +863,21 @@ window.addEventListener('error', function(ev){
     var groups = {};
     ['photosky','sky-salao','sky-praca','sky-metro','sky-aero','auditorium','sponzaenv'].forEach(function(k){ groups[k]=document.getElementById(k); });
     Object.keys(groups).forEach(function(k){ if(groups[k]) groups[k].setAttribute('visible', SPECIAL[name]===k); });
+    var IMGS = { real:'pano360', salao:'skysalao', praca:'skypraca', metro:'skymetro', aeroporto:'skyaero' };
+    var dbg = document.getElementById('dbg');
+    var shown = groups[SPECIAL[name]];
+    if(shown && IMGS[name]){
+      var im = document.getElementById(IMGS[name]);
+      try{
+        shown.setAttribute('material', 'src', '#'+IMGS[name]);
+        var mesh = shown.getObject3D('mesh');
+        if(mesh && mesh.material){
+          if(mesh.material.map) mesh.material.map.needsUpdate = true;
+          mesh.material.needsUpdate = true;
+        }
+        if(dbg) dbg.setAttribute('text','value', name+' | img '+(im?(im.naturalWidth+'x'+im.naturalHeight+(im.complete?' ok':' carregando')):'NAO ACHADA')+' | mesh '+(mesh?'ok':'null'));
+      }catch(e){ if(dbg) dbg.setAttribute('text','value', name+' | ERRO: '+e.message); }
+    } else if(dbg){ dbg.setAttribute('text','value', name); }
     if(SPECIAL[name]){
       if(env) env.setAttribute('visible', false);
       if(name==='sponza'){
