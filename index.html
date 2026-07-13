@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v14</p>
+  <p id="vstamp">v15</p>
 </div>
 
 </div>
@@ -573,23 +573,23 @@ AFRAME.registerComponent('plantec-cube', {
 (function(){
   var bar=document.querySelector('#bar i');
   var btn=document.getElementById('btn-vr');
-  function ready(){
-    if(btn && btn.disabled && window.__vrAllowed!==false){
-      btn.disabled=false; btn.textContent='ENTRAR EM VR';
-    }
-    if(bar) bar.style.width='100%';
-  }
+  window.__assetsLoaded=false;
+  window.__tryEnable=function(){
+    if(!window.__assetsLoaded || !btn) return;
+    btn.disabled=false;
+    btn.textContent = (window.__vrOk===false) ? 'VER EM 3D' : 'ENTRAR EM VR';
+  };
   var imgs=document.querySelectorAll('a-assets img');var total=imgs.length||1,done=0;
   imgs.forEach(function(im){
     if(im.complete){done++;}
     else { im.addEventListener('load',function(){done++;}); im.addEventListener('error',function(){done++;}); }
   });
+  function finish(){ window.__assetsLoaded=true; if(bar) bar.style.width='100%'; window.__tryEnable(); }
   var iv=setInterval(function(){
     if(bar) bar.style.width=Math.min(100,(done/total*100))+'%';
-    if(done>=total){clearInterval(iv);ready();}
+    if(done>=total){clearInterval(iv);finish();}
   },150);
-  setTimeout(function(){clearInterval(iv);ready();},20000); // failsafe
-  window.__bootReadyCheck = ready;
+  setTimeout(function(){clearInterval(iv);finish();},20000);
 })();
 // error overlay: mostra qualquer erro JS na tela
 window.addEventListener('error', function(ev){
@@ -607,12 +607,13 @@ window.addEventListener('error', function(ev){
   var sc = document.querySelector('a-scene');
   var vrBtn = document.getElementById('btn-vr');
   var status = document.getElementById('xrstatus');
-  function hide(el){ if(el) el.style.display='none'; }
+  function hideBootOverlay(){ var x=document.getElementById('boot'); if(x) x.style.display='none'; }
   function enter(useAR){
-    if(!sc){ return; }
+    if(window.__vrOk===false || !sc || !sc.enterVR){ hideBootOverlay(); return; }
     var p = sc.enterVR(useAR);
     if(p && p.catch){ p.catch(function(e){
-      status.textContent = (useAR?'AR':'VR')+' não iniciou: '+(e&&e.message?e.message:e);
+      status.textContent = 'VR não iniciou: '+(e&&e.message?e.message:e)+' — mostrando em 3D.';
+      hideBootOverlay();
     }); }
   }
   vrBtn.addEventListener('click', function(){ if(window.AUDIO) window.AUDIO.start(); enter(false); });
@@ -623,8 +624,8 @@ window.addEventListener('error', function(ev){
   }
   // feature detection
   if(!navigator.xr){
-    hide(vrBtn);
-    window.__vrAllowed=false; status.textContent = 'Abra no navegador do Meta Quest para VR. Aqui dá para explorar em 3D pela tela.';
+    window.__vrOk=false; if(window.__tryEnable) window.__tryEnable();
+    status.textContent = 'Sem VR neste navegador — modo 3D pela tela. Para imersivo, use o Meta Quest.';
     return;
   }
   status.textContent = '';
@@ -634,8 +635,8 @@ window.addEventListener('error', function(ev){
   ]).then(function(res){
     var arOk = res[0].status==='fulfilled' && res[0].value;
     var vrOk = res[1].status==='fulfilled' && res[1].value;
-    if(!vrOk){ window.__vrAllowed=false; hide(vrBtn); } else { if(window.__bootReadyCheck) window.__bootReadyCheck(); }
-    if(!vrOk){ status.textContent='Dispositivo sem VR imersivo — explore em 3D pela tela.'; }
+    window.__vrOk = !!vrOk; if(window.__tryEnable) window.__tryEnable();
+    if(!vrOk){ status.textContent='Sem VR imersivo aqui — modo 3D pela tela.'; }
     else { status.textContent='Dispositivo sem suporte a AR/VR imersivo. Explore a cena em 3D pela tela.'; }
   });
 })();
