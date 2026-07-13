@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v19</p>
+  <p id="vstamp">v20</p>
 </div>
 
 </div>
@@ -320,17 +320,20 @@
   </a-entity>
 
   <!-- Menu de cenarios dentro do VR -->
-  <a-entity id="thememenu" position="-3.4 2.15 -2.6" rotation="0 38 0">
-    <a-entity text="value: CENARIO; align: center; color: #F5A800; width: 3.2; font: dejavu" position="0 0.92 0"></a-entity>
-    <a-entity class="clickable tpill" theme-pick="name: auditorio" position="0 0.60 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Auditorio Plantec; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity class="clickable tpill" theme-pick="name: sponza" position="0 0.30 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Palacio (foto-real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity class="clickable tpill" theme-pick="name: real" position="0 0.00 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Montanha (real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity class="clickable tpill" theme-pick="name: starry" position="0 -0.30 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Espaco; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity class="clickable tpill" theme-pick="name: tron" position="0 -0.60 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Tron; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity class="clickable tpill" theme-pick="name: dream" position="0 -0.90 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Sonho; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity class="clickable tpill" theme-pick="name: forest" position="0 -1.20 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Floresta; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity class="clickable tpill" theme-pick="name: default" position="0 -1.50 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Canion; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity id="mutepill" class="clickable" narr-toggle position="0 -1.90 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="mutelabel" text="value: NARRACAO: ON; align: center; color: #ffffff; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+  <a-entity id="thememenu" position="-3.6 2.1 -2.5" rotation="0 40 0">
+    <a-entity text="value: CENARIO; align: center; color: #F5A800; width: 3.2; font: dejavu" position="0 1.16 0"></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: auditorio" position="-0.78 0.84 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Auditorio Plantec; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: salao" position="-0.78 0.54 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Salao Nobre (real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: sponza" position="-0.78 0.24 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Palacio (foto-real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: metro" position="-0.78 -0.06 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Estacao (real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: real" position="-0.78 -0.36 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Montanha (real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: praca" position="-0.78 -0.66 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Praca Noturna (real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: starry" position="0.78 0.84 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Espaco; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: tron" position="0.78 0.54 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Tron; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: dream" position="0.78 0.24 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Sonho; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: forest" position="0.78 -0.06 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Floresta; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: default" position="0.78 -0.36 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Canion; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity id="mutepill" class="clickable" narr-toggle position="0 -1.16 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="mutelabel" text="value: NARRACAO: ON; align: center; color: #ffffff; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
   </a-entity>
 
   <!-- 3D clickable arrows (mesh + handler on same entity) -->
@@ -843,12 +846,14 @@ window.addEventListener('error', function(ev){
     });
   }
   function apply(name){
-    var SPECIAL = { real: 'photosky', auditorio: 'auditorium', sponza: 'sponzaenv' };
+    var SPECIAL = { real: 'photosky', salao: 'photosky', praca: 'photosky', metro: 'photosky', auditorio: 'auditorium', sponza: 'sponzaenv' };
+    var PHOTOS = { real: 'assets/pano.jpg', salao: 'assets/sky_salao.jpg', praca: 'assets/sky_praca.jpg', metro: 'assets/sky_metro.jpg' };
     if(!SPECIAL[name] && !THEMES[name]) return;
     current = name;
     var env = document.getElementById('env');
     var groups = { photosky: document.getElementById('photosky'), auditorium: document.getElementById('auditorium'), sponzaenv: document.getElementById('sponzaenv') };
     Object.keys(groups).forEach(function(k){ if(groups[k]) groups[k].setAttribute('visible', SPECIAL[name]===k); });
+    if(PHOTOS[name] && groups.photosky){ try{ groups.photosky.setAttribute('src', PHOTOS[name]); }catch(e){} }
     if(SPECIAL[name]){
       if(env) env.setAttribute('visible', false);
       if(name==='sponza'){
@@ -881,7 +886,7 @@ window.addEventListener('error', function(ev){
   }
   window.APPLY_THEME = function(){ apply(current); };
   window.SET_THEME = apply;
-  var ORDER = ['auditorio','sponza','real','starry','tron','dream','forest','default'];
+  var ORDER = ['auditorio','salao','sponza','metro','real','praca','starry','tron','dream','forest','default'];
   window.CYCLE_THEME = function(){ apply(ORDER[(ORDER.indexOf(current)+1) % ORDER.length]); };
   var sc = document.querySelector('a-scene');
   if(sc){
