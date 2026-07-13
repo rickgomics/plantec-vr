@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v24</p>
+  <p id="vstamp">v25</p>
 </div>
 
 </div>
@@ -793,7 +793,8 @@ window.addEventListener('error', function(ev){
     if(!el){ el=document.createElement('div'); el.id='errbox';
       el.style.cssText='position:fixed;bottom:90px;left:8px;right:8px;z-index:99999;background:rgba(120,0,0,.85);color:#fff;font:12px monospace;padding:8px 10px;border-radius:8px;max-height:30vh;overflow:auto;';
       document.body.appendChild(el); }
-    el.textContent += (ev.message||'erro') + ' @ ' + (ev.filename||'') + ':' + (ev.lineno||'') + '\n';
+    var st = (ev.error && ev.error.stack) ? ev.error.stack.split('\n').slice(0,3).join(' << ') : '';
+    el.textContent += (ev.message||'erro') + ' @ ' + (ev.filename||'').split('/').pop() + ':' + (ev.lineno||'') + (st?' || '+st.slice(0,220):'') + '\n';
   }catch(e){}
 });
 </script>
