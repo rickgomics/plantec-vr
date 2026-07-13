@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v21</p>
+  <p id="vstamp">v22</p>
 </div>
 
 </div>
@@ -121,6 +121,10 @@
 <img id="img55" src="assets/s-56.jpg" crossorigin="anonymous">
 <img id="pano360" src="assets/pano.jpg" crossorigin="anonymous">
 <img id="logoimg" src="assets/logo.png" crossorigin="anonymous">
+<img id="skysalao" src="assets/sky_salao.jpg" crossorigin="anonymous">
+<img id="skypraca" src="assets/sky_praca.jpg" crossorigin="anonymous">
+<img id="skymetro" src="assets/sky_metro.jpg" crossorigin="anonymous">
+<img id="skyaero" src="assets/sky_aeroporto.jpg" crossorigin="anonymous">
   </a-assets>
 
   <!-- Lighting -->
@@ -131,6 +135,10 @@
 
   <!-- Real 360 photo sky (hidden unless theme=real) -->
   <a-sky id="photosky" src="#pano360" visible="false" rotation="0 -60 0"></a-sky>
+  <a-sky id="sky-salao" src="#skysalao" visible="false" rotation="0 0 0"></a-sky>
+  <a-sky id="sky-praca" src="#skypraca" visible="false" rotation="0 -90 0"></a-sky>
+  <a-sky id="sky-metro" src="#skymetro" visible="false" rotation="0 0 0"></a-sky>
+  <a-sky id="sky-aero" src="#skyaero" visible="false" rotation="0 180 0"></a-sky>
 
   <!-- Virtual world environment (VR) -->
   <a-entity id="env" environment="preset: starry; seed: 12; ground: hills; groundYScale: 3; groundColor: #241640; groundColor2: #120b22; groundTexture: walkernoise; dressing: towers; dressingAmount: 60; dressingColor: #00A99D; dressingScale: 4; dressingVariance: 12 5 12; grid: dots; gridColor: #F5A800; fog: 0.6; skyType: atmosphere; lightPosition: 0.6 0.35 -1"></a-entity>
@@ -501,7 +509,7 @@ window.addEventListener('DOMContentLoaded', function(){
 AFRAME.registerComponent('ar-toggle', {
   init: function () {
     var sc = this.el;
-    var ids = ['env', 'photosky', 'auditorium', 'sponzaenv'];
+    var ids = ['env', 'photosky', 'sky-salao', 'sky-praca', 'sky-metro', 'sky-aero', 'auditorium', 'sponzaenv'];
     function setEnv(show) {
       if (show && window.APPLY_THEME) { window.APPLY_THEME(); return; }
       ids.forEach(function (id) {
@@ -847,14 +855,13 @@ window.addEventListener('error', function(ev){
     });
   }
   function apply(name){
-    var SPECIAL = { real: 'photosky', salao: 'photosky', praca: 'photosky', metro: 'photosky', aeroporto: 'photosky', auditorio: 'auditorium', sponza: 'sponzaenv' };
-    var PHOTOS = { real: 'assets/pano.jpg', salao: 'assets/sky_salao.jpg', praca: 'assets/sky_praca.jpg', metro: 'assets/sky_metro.jpg', aeroporto: 'assets/sky_aeroporto.jpg' };
+    var SPECIAL = { real: 'photosky', salao: 'sky-salao', praca: 'sky-praca', metro: 'sky-metro', aeroporto: 'sky-aero', auditorio: 'auditorium', sponza: 'sponzaenv' };
     if(!SPECIAL[name] && !THEMES[name]) return;
     current = name;
     var env = document.getElementById('env');
-    var groups = { photosky: document.getElementById('photosky'), auditorium: document.getElementById('auditorium'), sponzaenv: document.getElementById('sponzaenv') };
+    var groups = {};
+    ['photosky','sky-salao','sky-praca','sky-metro','sky-aero','auditorium','sponzaenv'].forEach(function(k){ groups[k]=document.getElementById(k); });
     Object.keys(groups).forEach(function(k){ if(groups[k]) groups[k].setAttribute('visible', SPECIAL[name]===k); });
-    if(PHOTOS[name] && groups.photosky){ try{ groups.photosky.setAttribute('src', PHOTOS[name]); }catch(e){} }
     if(SPECIAL[name]){
       if(env) env.setAttribute('visible', false);
       if(name==='sponza'){
