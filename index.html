@@ -146,6 +146,7 @@
 <img id="img54" src="assets/s-55.jpg" crossorigin="anonymous">
 <img id="img55" src="assets/s-56.jpg" crossorigin="anonymous">
 <img id="pano360" src="assets/pano.jpg" crossorigin="anonymous">
+<img id="logoimg" src="assets/logo.png" crossorigin="anonymous">
   </a-assets>
 
   <!-- Lighting -->
@@ -218,8 +219,11 @@
   <!-- Title text -->
   <a-entity id="counter" text="value: 1 / 56; align: center; color: #8affc8; width: 5; font: dejavu"
      position="0 3.15 -3.25"></a-entity>
-  <a-entity text="value: PLANTEC  ·  INSTITUCIONAL 2026; align: center; color: #ffffff; width: 7; font: dejavu"
-     position="0 3.55 -3.3"></a-entity>
+  <a-entity position="0 3.6 -3.3">
+    <a-image src="#logoimg" width="2.6" height="0.592" material="transparent: true; alphaTest: 0.05"
+       animation="property: position; from: 0 -0.06 0; to: 0 0.06 0; dir: alternate; dur: 3200; loop: true; easing: easeInOutSine"
+       animation__sway="property: rotation; from: 0 -4 0; to: 0 4 0; dir: alternate; dur: 5200; loop: true; easing: easeInOutSine"></a-image>
+  </a-entity>
 
   <!-- Slide panels (carousel window of 5) -->
   <a-plane id="p-l2" geometry="width: 3.4; height: 1.9125" material="shader: flat; transparent: true; side: double" visible="false"></a-plane>
@@ -330,9 +334,17 @@ AFRAME.registerComponent('nav-controller', {
     var self = this;
     this.cool = 0;
     var el = this.el;
-    el.addEventListener('triggerdown', function(){ if(window.AUDIO){window.AUDIO.start();window.AUDIO.resume();} if(window.DECK) window.DECK.next(); });
+    function pointingAtUI(){
+      var rc = el.components && el.components.raycaster;
+      return rc && rc.intersectedEls && rc.intersectedEls.length > 0;
+    }
+    el.addEventListener('triggerdown', function(){
+      if(window.AUDIO){window.AUDIO.start();window.AUDIO.resume();}
+      if(pointingAtUI()) return;              // clique no menu/setas: nao troca slide
+      if(window.DECK) window.DECK.next();
+    });
     el.addEventListener('gripdown',    function(){ if(window.DECK) window.DECK.prev(); });
-    el.addEventListener('abuttondown', function(){ if(window.DECK) window.DECK.next(); });
+    el.addEventListener('abuttondown', function(){ if(pointingAtUI()) return; if(window.DECK) window.DECK.next(); });
     el.addEventListener('bbuttondown', function(){ if(window.DECK) window.DECK.prev(); });
     el.addEventListener('xbuttondown', function(){ if(window.DECK) window.DECK.prev(); });
     el.addEventListener('ybuttondown', function(){ if(window.DECK) window.DECK.next(); });
