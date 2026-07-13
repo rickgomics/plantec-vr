@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v20</p>
+  <p id="vstamp">v21</p>
 </div>
 
 </div>
@@ -328,6 +328,7 @@
     <a-entity class="clickable tpill" theme-pick="name: metro" position="-0.78 -0.06 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Estacao (real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
     <a-entity class="clickable tpill" theme-pick="name: real" position="-0.78 -0.36 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Montanha (real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
     <a-entity class="clickable tpill" theme-pick="name: praca" position="-0.78 -0.66 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Praca Noturna (real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: aeroporto" position="-0.78 -0.96 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Aeroporto (real); align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
     <a-entity class="clickable tpill" theme-pick="name: starry" position="0.78 0.84 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Espaco; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
     <a-entity class="clickable tpill" theme-pick="name: tron" position="0.78 0.54 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Tron; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
     <a-entity class="clickable tpill" theme-pick="name: dream" position="0.78 0.24 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Sonho; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
@@ -846,8 +847,8 @@ window.addEventListener('error', function(ev){
     });
   }
   function apply(name){
-    var SPECIAL = { real: 'photosky', salao: 'photosky', praca: 'photosky', metro: 'photosky', auditorio: 'auditorium', sponza: 'sponzaenv' };
-    var PHOTOS = { real: 'assets/pano.jpg', salao: 'assets/sky_salao.jpg', praca: 'assets/sky_praca.jpg', metro: 'assets/sky_metro.jpg' };
+    var SPECIAL = { real: 'photosky', salao: 'photosky', praca: 'photosky', metro: 'photosky', aeroporto: 'photosky', auditorio: 'auditorium', sponza: 'sponzaenv' };
+    var PHOTOS = { real: 'assets/pano.jpg', salao: 'assets/sky_salao.jpg', praca: 'assets/sky_praca.jpg', metro: 'assets/sky_metro.jpg', aeroporto: 'assets/sky_aeroporto.jpg' };
     if(!SPECIAL[name] && !THEMES[name]) return;
     current = name;
     var env = document.getElementById('env');
@@ -886,7 +887,7 @@ window.addEventListener('error', function(ev){
   }
   window.APPLY_THEME = function(){ apply(current); };
   window.SET_THEME = apply;
-  var ORDER = ['auditorio','salao','sponza','metro','real','praca','starry','tron','dream','forest','default'];
+  var ORDER = ['auditorio','aeroporto','salao','sponza','metro','real','praca','starry','tron','dream','forest','default'];
   window.CYCLE_THEME = function(){ apply(ORDER[(ORDER.indexOf(current)+1) % ORDER.length]); };
   var sc = document.querySelector('a-scene');
   if(sc){
