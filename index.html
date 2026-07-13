@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v15</p>
+  <p id="vstamp">v16</p>
 </div>
 
 </div>
@@ -214,6 +214,7 @@
     <a-entity class="clickable tpill" theme-pick="name: dream"   position="0 -0.60 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Sonho; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
     <a-entity class="clickable tpill" theme-pick="name: forest"  position="0 -0.90 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Floresta; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
     <a-entity class="clickable tpill" theme-pick="name: default" position="0 -1.20 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Canion; align: center; color: #eafff4; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity id="mutepill" class="clickable" narr-toggle position="0 -1.60 0" geometry="primitive: plane; width: 1.5; height: 0.26" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="mutelabel" text="value: NARRACAO: ON; align: center; color: #ffffff; width: 2.6; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
   </a-entity>
 
   <!-- 3D clickable arrows (mesh + handler on same entity) -->
@@ -293,6 +294,7 @@ AFRAME.registerComponent('deck', {
       pl.setAttribute('material', 'src', '#img' + si);
       pl.setAttribute('material', 'opacity', L.op);
     });
+    if (window.NARR) window.NARR.play(this.index);
     var ctr = document.getElementById('counter');
     if (ctr) ctr.setAttribute('text', 'value', (this.index+1) + '  /  ' + this.total);
     // sync 2D hud
@@ -317,6 +319,10 @@ AFRAME.registerComponent('nav-controller', {
         if(t.components && t.components['theme-pick']){
           if(window.SET_THEME) window.SET_THEME(t.components['theme-pick'].data.name);
           if(window.AUDIO) window.AUDIO.whoosh(1);
+          return true;
+        }
+        if(t.components && t.components['narr-toggle']){
+          if(window.NARR) window.NARR.toggle();
           return true;
         }
         if(t.components && t.components['arrow-btn']){
@@ -496,6 +502,7 @@ AFRAME.registerComponent('height-fix', {
     later(chirp, 1200);
   }
   window.AUDIO = {
+    duck: function(on){ if(master) master.gain.linearRampToValueAtTime(on?0.16:0.55, ctx.currentTime+0.4); },
     resume: function(){ if(ctx&&ctx.state!=='running'){ ctx.resume(); } },
     start: function(){ ensure(); if(ctx&&ctx.state!=='running') ctx.resume(); enabled=true; },
     whoosh: function(dir){
@@ -566,6 +573,56 @@ AFRAME.registerComponent('plantec-cube', {
     this.el.setObject3D('mesh', group);
   },
   remove: function () { this.el.removeObject3D('mesh'); }
+});
+
+
+// ---------- Narracao por slide ----------
+(function(){
+  var player = new Audio();
+  player.preload = 'none';
+  var muted = false;
+  var pend = null;
+  player.addEventListener('ended', function(){ if(window.AUDIO) window.AUDIO.duck(false); });
+  player.addEventListener('error', function(){ if(window.AUDIO) window.AUDIO.duck(false); });
+  function two(n){ return (n<10?'0':'')+n; }
+  window.NARR = {
+    play: function(idx){
+      if(muted) return;
+      clearTimeout(pend);
+      pend = setTimeout(function(){          // debounce: espera 400ms parado no slide
+        try{
+          player.pause();
+          player.src = 'assets/narr/n-' + two(idx+1) + '.mp3';
+          if(window.AUDIO) window.AUDIO.duck(true);
+          var p = player.play();
+          if(p && p.catch) p.catch(function(){ if(window.AUDIO) window.AUDIO.duck(false); });
+        }catch(e){}
+      }, 400);
+    },
+    stop: function(){ clearTimeout(pend); try{ player.pause(); }catch(e){} if(window.AUDIO) window.AUDIO.duck(false); },
+    toggle: function(){
+      muted = !muted;
+      if(muted){ window.NARR.stop(); } else if(window.DECK){ window.NARR.play(window.DECK.index); }
+      var lbl = document.getElementById('mutelabel');
+      if(lbl) lbl.setAttribute('text', 'value', muted ? 'NARRACAO: OFF' : 'NARRACAO: ON');
+      var pill = document.getElementById('mutepill');
+      if(pill) pill.setAttribute('material', 'color', muted ? '#221033' : '#00A99D');
+      return muted;
+    },
+    isMuted: function(){ return muted; }
+  };
+})();
+
+// componente do botao de mudo
+AFRAME.registerComponent('narr-toggle', {
+  init: function(){
+    var self=this;
+    function go(){ if(window.NARR) window.NARR.toggle(); }
+    this.el.addEventListener('click', go);
+    this.el.addEventListener('mousedown', go);
+    this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.08 1.08 1.08'); });
+    this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
+  }
 });
 </script>
 <script>
