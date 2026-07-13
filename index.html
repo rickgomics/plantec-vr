@@ -52,7 +52,7 @@
 <div id="boot">
   <h1>PLANTEC <span class="g">·</span> INSTITUCIONAL 2026</h1>
   <p>Preparando a experiência imersiva…</p>
-  <p style="font-size:11px;opacity:.5;">56 painéis · WebXR · <b style="color:#00d16a">v7</b></p>
+  <p style="font-size:11px;opacity:.5;">56 painéis · WebXR · <b style="color:#00d16a">v8</b></p>
   <div id="bar"><i></i></div>
 </div>
 
@@ -319,7 +319,7 @@ AFRAME.registerComponent('nav-controller', {
     var self = this;
     this.cool = 0;
     var el = this.el;
-    el.addEventListener('triggerdown', function(){ if(window.DECK) window.DECK.next(); });
+    el.addEventListener('triggerdown', function(){ if(window.AUDIO){window.AUDIO.start();window.AUDIO.resume();} if(window.DECK) window.DECK.next(); });
     el.addEventListener('gripdown',    function(){ if(window.DECK) window.DECK.prev(); });
     el.addEventListener('abuttondown', function(){ if(window.DECK) window.DECK.next(); });
     el.addEventListener('bbuttondown', function(){ if(window.DECK) window.DECK.prev(); });
@@ -386,6 +386,7 @@ AFRAME.registerComponent('height-fix', {
     if (!rig) return;
     sc.addEventListener('enter-vr', function () {
       rig.setAttribute('position', {x:0, y:1.6, z:0});
+      if (window.AUDIO) { window.AUDIO.start(); setTimeout(function(){ window.AUDIO.resume(); }, 500); }
     });
     sc.addEventListener('exit-vr', function () {
       rig.setAttribute('position', {x:0, y:0, z:0});
@@ -400,10 +401,10 @@ AFRAME.registerComponent('height-fix', {
     if(ctx) return;
     var AC = window.AudioContext||window.webkitAudioContext; if(!AC) return;
     ctx = new AC();
-    master = ctx.createGain(); master.gain.value = 0.22; master.connect(ctx.destination);
-    // ambient: two detuned sines + slow LFO on gain + gentle filtered noise
-    var g = ctx.createGain(); g.gain.value = 0.16; g.connect(master);
-    [55, 55*1.5, 110.3].forEach(function(f,i){
+    master = ctx.createGain(); master.gain.value = 0.5; master.connect(ctx.destination);
+    // ambient: detuned pad in mid register + slow LFO + gentle filtered noise
+    var g = ctx.createGain(); g.gain.value = 0.22; g.connect(master);
+    [110, 165, 220.5].forEach(function(f,i){
       var o=ctx.createOscillator(); o.type='sine'; o.frequency.value=f; o.detune.value=(i-1)*7;
       var og=ctx.createGain(); og.gain.value=0.33; o.connect(og); og.connect(g); o.start();
     });
@@ -417,15 +418,17 @@ AFRAME.registerComponent('height-fix', {
     ns.connect(f); f.connect(ng); ng.connect(master); ns.start();
   }
   window.AUDIO = {
-    start: function(){ ensure(); if(ctx&&ctx.state==='suspended') ctx.resume(); enabled=true; },
+    resume: function(){ if(ctx&&ctx.state!=='running'){ ctx.resume(); } },
+    start: function(){ ensure(); if(ctx&&ctx.state!=='running') ctx.resume(); enabled=true; },
     whoosh: function(dir){
       if(!enabled||!ctx) return;
+      if(ctx.state!=='running'){ try{ctx.resume();}catch(e){} }
       var t=ctx.currentTime;
       var o=ctx.createOscillator(); o.type='triangle';
       o.frequency.setValueAtTime(dir>0?220:440,t);
       o.frequency.exponentialRampToValueAtTime(dir>0?440:220,t+0.18);
       var g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
-      g.gain.exponentialRampToValueAtTime(0.5,t+0.03);
+      g.gain.exponentialRampToValueAtTime(0.9,t+0.03);
       g.gain.exponentialRampToValueAtTime(0.0001,t+0.35);
       o.connect(g); g.connect(master); o.start(t); o.stop(t+0.4);
       var buf=ctx.createBuffer(1, ctx.sampleRate*0.3, ctx.sampleRate);
@@ -434,7 +437,7 @@ AFRAME.registerComponent('height-fix', {
       var f=ctx.createBiquadFilter(); f.type='bandpass';
       f.frequency.setValueAtTime(dir>0?600:1400,t);
       f.frequency.exponentialRampToValueAtTime(dir>0?1600:500,t+0.25);
-      var ng=ctx.createGain(); ng.gain.value=0.35;
+      var ng=ctx.createGain(); ng.gain.value=0.6;
       s.connect(f); f.connect(ng); ng.connect(master); s.start(t);
     }
   };
