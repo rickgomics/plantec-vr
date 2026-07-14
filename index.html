@@ -48,7 +48,7 @@
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <a id="sitelink" href="https://institucional.plantec.com" target="_blank" rel="noopener">institucional.plantec.com</a>
   <div id="xrstatus"></div>
-  <p id="vstamp">v44</p>
+  <p id="vstamp">v45</p>
 </div>
 
 </div>
@@ -341,14 +341,6 @@
     <a-entity id="autopill" class="clickable" auto-toggle position="0 -0.86 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #221033; opacity: 0.92"><a-entity id="autolabel" text="value: AUTO: OFF; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
   </a-entity>
 
-  <!-- Teca, a apresentadora -->
-  <a-entity id="tecawrap" position="2.78 0 -3.02" rotation="0 -10 0"
-     animation="property: position; from: 2.78 0 -3.02; to: 2.78 0.05 -3.02; dir: alternate; dur: 2600; loop: true; easing: easeInOutSine">
-    <a-image id="teca" src="assets/teca.png" width="0.98" height="1.62" position="0 0.81 0"
-       material="transparent: true; alphaTest: 0.05"
-       animation__push="property: position; from: 0 0.81 0; to: -0.22 0.81 0; dur: 210; dir: alternate; loop: 2; startEvents: teca-push; easing: easeOutQuad"></a-image>
-  </a-entity>
-
   <!-- Setas discretas -->
   <a-entity id="arrowPrev" arrow-btn="dir: prev" class="clickable" position="-2.12 1.6 -3.1">
     <a-circle radius="0.13" material="shader: flat; color: #ffffff; opacity: 0.07; transparent: true"></a-circle>
@@ -429,8 +421,6 @@ AFRAME.registerComponent('deck', {
     });
     if (window.NARR) window.NARR.play(this.index);
     if (window.__onSlideShown) window.__onSlideShown();
-    var teca = document.getElementById('teca');
-    if (teca) teca.emit('teca-push');
     var ctr = document.getElementById('counter');
     if (ctr) ctr.setAttribute('text', 'value', (this.index+1) + ' / ' + this.total);
     // sync 2D hud
@@ -857,7 +847,7 @@ AFRAME.registerComponent('pres-toggle', {
   init: function(){
     var self=this;
     function setVis(on){
-      ['arrowPrev','arrowNext','counter','tecawrap'].forEach(function(id){
+      ['arrowPrev','arrowNext','counter'].forEach(function(id){
         var e=document.getElementById(id); if(e) e.setAttribute('visible', on);
       });
       if(window.DECK){
