@@ -338,6 +338,7 @@
     <a-entity id="mutepill" class="clickable" narr-toggle position="0 0.22 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="mutelabel" text="value: NARRACAO: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
     <a-entity id="ambpill" class="clickable" amb-toggle position="0 -0.14 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="amblabel" text="value: AMBIENTE: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
     <a-entity id="prespill" class="clickable" pres-toggle position="0 -0.50 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="preslabel" text="value: APRESENTACAO: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity id="autopill" class="clickable" auto-toggle position="0 -0.86 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #221033; opacity: 0.92"><a-entity id="autolabel" text="value: AUTO: OFF; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
   </a-entity>
 
   <!-- Setas discretas -->
@@ -419,6 +420,7 @@ AFRAME.registerComponent('deck', {
       pl.setAttribute('material', 'opacity', L.op);
     });
     if (window.NARR) window.NARR.play(this.index);
+    if (window.__onSlideShown) window.__onSlideShown();
     var ctr = document.getElementById('counter');
     if (ctr) ctr.setAttribute('text', 'value', (this.index+1) + ' / ' + this.total);
     // sync 2D hud
@@ -445,7 +447,7 @@ AFRAME.registerComponent('nav-controller', {
           if(window.AUDIO) window.AUDIO.whoosh(1);
           return true;
         }
-        if(t.components && (t.components['amb-toggle'] || t.components['pres-toggle'] || t.components['site-open'] || t.components['site-mode'])){
+        if(t.components && (t.components['amb-toggle'] || t.components['pres-toggle'] || t.components['site-open'] || t.components['site-mode'] || t.components['auto-toggle'])){
           t.emit('click'); return true;
         }
         if(t.components && t.components['narr-toggle']){
@@ -711,8 +713,8 @@ AFRAME.registerComponent('plantec-cube', {
   player.preload = 'none';
   var muted = false;
   var pend = null;
-  player.addEventListener('ended', function(){ if(window.AUDIO) window.AUDIO.duck(false); });
-  player.addEventListener('error', function(){ if(window.AUDIO) window.AUDIO.duck(false); });
+  player.addEventListener('ended', function(){ if(window.AUDIO) window.AUDIO.duck(false); if(window.__autoAdvance) window.__autoAdvance(); });
+  player.addEventListener('error', function(){ if(window.AUDIO) window.AUDIO.duck(false); if(window.__autoAdvance) window.__autoAdvance(); });
   function two(n){ return (n<10?'0':'')+n; }
   window.NARR = {
     play: function(idx){
@@ -845,6 +847,7 @@ AFRAME.registerComponent('pres-toggle', {
         else { window.DECK.planes.forEach(function(pl){ pl.setAttribute('visible', false); }); }
       }
       if(!on && window.NARR) window.NARR.stop();
+      if(!on) clearTimeout(window.__autoT);
       if(on && window.NARR && window.DECK && !window.NARR.isMuted()) window.NARR.play(window.DECK.index);
       var lbl=document.getElementById('preslabel');
       if(lbl) lbl.setAttribute('text','value', on?'APRESENTACAO: ON':'APRESENTACAO: OFF');
@@ -878,6 +881,48 @@ AFRAME.registerComponent('site-mode', {
     this.el.addEventListener('click', go);
     this.el.addEventListener('mousedown', go);
     this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.06 1.06 1.06'); });
+    this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
+  }
+});
+
+
+// ---------- Modo automatico ----------
+(function(){
+  window.AUTO = false;
+  window.__autoT = null;
+  function advance(delay){
+    clearTimeout(window.__autoT);
+    window.__autoT = setTimeout(function(){
+      if(!window.AUTO || window.__presOn===false || !window.DECK) return;
+      if(window.DECK.index >= window.DECK.total - 1){ window.SET_AUTO(false); return; }
+      window.DECK.next();
+    }, delay);
+  }
+  window.__autoAdvance = function(){ if(window.AUTO && window.__presOn!==false) advance(1400); };
+  window.__onSlideShown = function(){
+    if(window.AUTO && window.NARR && window.NARR.isMuted()) advance(8000);
+  };
+  window.SET_AUTO = function(v){
+    window.AUTO = !!v;
+    clearTimeout(window.__autoT);
+    var lbl=document.getElementById('autolabel');
+    if(lbl) lbl.setAttribute('text','value', v?'AUTO: ON':'AUTO: OFF');
+    var pill=document.getElementById('autopill');
+    if(pill) pill.setAttribute('material','color', v?'#00A99D':'#221033');
+    if(v){
+      if(window.NARR && window.NARR.isMuted()) advance(8000);
+      // com narracao ligada, o encadeamento vem do fim do audio atual
+    }
+  };
+})();
+
+AFRAME.registerComponent('auto-toggle', {
+  init: function(){
+    var self=this;
+    function go(){ window.SET_AUTO(!window.AUTO); }
+    this.el.addEventListener('click', go);
+    this.el.addEventListener('mousedown', go);
+    this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.08 1.08 1.08'); });
     this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
   }
 });
