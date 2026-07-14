@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v27</p>
+  <p id="vstamp">v28</p>
 </div>
 
 </div>
@@ -134,11 +134,7 @@
   <a-entity light="type: point; color: #F5A800; intensity: 0.5; distance: 14" position="6 2 -4"></a-entity>
 
   <!-- Real 360 photo sky (hidden unless theme=real) -->
-  <a-sky id="photosky" src="#pano360" visible="false" rotation="0 -60 0"></a-sky>
-  <a-sky id="sky-salao" src="#skysalao" visible="false" rotation="0 0 0"></a-sky>
-  <a-sky id="sky-praca" src="#skypraca" visible="false" rotation="0 -90 0"></a-sky>
-  <a-sky id="sky-metro" src="#skymetro" visible="false" rotation="0 0 0"></a-sky>
-  <a-sky id="sky-aero" src="#skyaero" visible="false" rotation="0 180 0"></a-sky>
+  <a-entity id="photodome" photo-dome></a-entity>
 
   <!-- Virtual world environment (VR) -->
   <a-entity id="env" environment="preset: starry; seed: 12; ground: hills; groundYScale: 3; groundColor: #241640; groundColor2: #120b22; groundTexture: walkernoise; dressing: towers; dressingAmount: 60; dressingColor: #00A99D; dressingScale: 4; dressingVariance: 12 5 12; grid: dots; gridColor: #F5A800; fog: 0.6; skyType: atmosphere; lightPosition: 0.6 0.35 -1"></a-entity>
@@ -510,7 +506,7 @@ window.addEventListener('DOMContentLoaded', function(){
 AFRAME.registerComponent('ar-toggle', {
   init: function () {
     var sc = this.el;
-    var ids = ['env', 'photosky', 'sky-salao', 'sky-praca', 'sky-metro', 'sky-aero', 'auditorium', 'sponzaenv'];
+    var ids = ['env', 'photodome', 'auditorium', 'sponzaenv'];
     function setEnv(show) {
       if (show && window.APPLY_THEME) { window.APPLY_THEME(); return; }
       ids.forEach(function (id) {
@@ -773,6 +769,30 @@ AFRAME.registerComponent('narr-toggle', {
   }
   ['oculus-touch-controls','meta-touch-controls','tracked-controls'].forEach(guard);
 })();
+
+// ---------- Cupula de foto 360 em THREE puro (sem material do A-Frame) ----------
+AFRAME.registerComponent('photo-dome', {
+  init: function () {
+    var T = AFRAME.THREE;
+    var geo = new T.SphereGeometry(400, 48, 32);
+    geo.scale(-1, 1, 1);   // faces para dentro
+    this.mat = new T.MeshBasicMaterial({ color: 0xffffff });
+    this.mesh = new T.Mesh(geo, this.mat);
+    this.el.setObject3D('mesh', this.mesh);
+    this.el.setAttribute('visible', false);
+  },
+  setImage: function (im) {
+    var T = AFRAME.THREE;
+    if (this.tex) { this.tex.dispose(); }
+    this.tex = new T.Texture(im);
+    if (T.SRGBColorSpace !== undefined) this.tex.colorSpace = T.SRGBColorSpace;
+    else if (T.sRGBEncoding !== undefined) this.tex.encoding = T.sRGBEncoding;
+    this.tex.needsUpdate = true;
+    this.mat.map = this.tex;
+    this.mat.needsUpdate = true;
+  },
+  remove: function () { this.el.removeObject3D('mesh'); }
+});
 </script>
 <script>
 // boot progress + fade
@@ -880,39 +900,27 @@ window.addEventListener('error', function(ev){
     });
   }
   function apply(name){
-    var SPECIAL = { real: 'photosky', salao: 'sky-salao', praca: 'sky-praca', metro: 'sky-metro', aeroporto: 'sky-aero', auditorio: 'auditorium', sponza: 'sponzaenv' };
+    var SPECIAL = { real: 'photodome', salao: 'photodome', praca: 'photodome', metro: 'photodome', aeroporto: 'photodome', auditorio: 'auditorium', sponza: 'sponzaenv' };
     if(!SPECIAL[name] && !THEMES[name]) return;
     current = name;
     var env = document.getElementById('env');
     var groups = {};
-    ['photosky','sky-salao','sky-praca','sky-metro','sky-aero','auditorium','sponzaenv'].forEach(function(k){ groups[k]=document.getElementById(k); });
+    ['photodome','auditorium','sponzaenv'].forEach(function(k){ groups[k]=document.getElementById(k); });
     Object.keys(groups).forEach(function(k){ if(groups[k]) groups[k].setAttribute('visible', SPECIAL[name]===k); });
     var IMGS = { real:'pano360', salao:'skysalao', praca:'skypraca', metro:'skymetro', aeroporto:'skyaero' };
     var dbg = document.getElementById('dbg');
     var shown = groups[SPECIAL[name]];
-    function bindSkyTexture(skyEl, imgId, themeName){
+    function bindSkyTexture(domeEl, imgId, themeName){
       var im = document.getElementById(imgId);
       if(!im){ if(dbg) dbg.setAttribute('text','value', themeName+' | img NAO ACHADA'); return; }
+      var rots = { pano360: -60, skysalao: 0, skypraca: -90, skymetro: 0, skyaero: 180 };
       function doBind(){
         try{
-          var mesh = skyEl.getObject3D('mesh');
-          if(!mesh || !mesh.material){
-            skyEl.addEventListener('loaded', doBind, {once:true});
-            return;
-          }
-          var T = AFRAME.THREE;
-          if(!skyEl.__texSrc || skyEl.__texSrc !== imgId){
-            var tex = new T.Texture(im);
-            if(T.SRGBColorSpace !== undefined) tex.colorSpace = T.SRGBColorSpace;
-            else if(T.sRGBEncoding !== undefined) tex.encoding = T.sRGBEncoding;
-            tex.needsUpdate = true;
-            if(skyEl.__tex && skyEl.__tex.dispose) skyEl.__tex.dispose();
-            skyEl.__tex = tex; skyEl.__texSrc = imgId;
-          }
-          mesh.material.map = skyEl.__tex;
-          if(mesh.material.color) mesh.material.color.set('#ffffff');
-          mesh.material.needsUpdate = true;
-          if(dbg) dbg.setAttribute('text','value', themeName+' | tex '+im.naturalWidth+'x'+im.naturalHeight+' aplicada');
+          var comp = domeEl.components['photo-dome'];
+          if(!comp){ domeEl.addEventListener('loaded', doBind, {once:true}); return; }
+          comp.setImage(im);
+          domeEl.setAttribute('rotation', {x:0, y:(rots[imgId]||0), z:0});
+          if(dbg) dbg.setAttribute('text','value', themeName+' | dome '+im.naturalWidth+'x'+im.naturalHeight+' ok');
         }catch(e){ if(dbg) dbg.setAttribute('text','value', themeName+' | ERRO: '+e.message); }
       }
       if(im.complete && im.naturalWidth>0){ doBind(); }
