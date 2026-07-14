@@ -447,7 +447,11 @@ AFRAME.registerComponent('nav-controller', {
           if(window.AUDIO) window.AUDIO.whoosh(1);
           return true;
         }
-        if(t.components && (t.components['amb-toggle'] || t.components['pres-toggle'] || t.components['site-open'] || t.components['site-mode'] || t.components['auto-toggle'])){
+        if(t.components && t.components['auto-toggle']){
+          if(window.SET_AUTO) window.SET_AUTO(!window.AUTO);
+          return true;
+        }
+        if(t.components && (t.components['amb-toggle'] || t.components['pres-toggle'] || t.components['site-open'] || t.components['site-mode'])){
           t.emit('click'); return true;
         }
         if(t.components && t.components['narr-toggle']){
@@ -706,6 +710,15 @@ AFRAME.registerComponent('plantec-cube', {
 });
 
 
+function debounced(el, fn){
+  return function(){
+    var now = performance.now();
+    if(el.__lastGo && now - el.__lastGo < 350) return;
+    el.__lastGo = now;
+    fn();
+  };
+}
+
 // ---------- Narracao por slide ----------
 (function(){
   var player = new Audio();
@@ -896,7 +909,11 @@ AFRAME.registerComponent('site-mode', {
   window.__onSlideShown = function(){
     if(window.AUTO && window.NARR && window.NARR.isMuted()) advance(8000);
   };
+  var lastSet = 0;
   window.SET_AUTO = function(v){
+    var now = performance.now();
+    if(now - lastSet < 350) return;
+    lastSet = now;
     window.AUTO = !!v;
     clearTimeout(window.__autoT);
     var lbl=document.getElementById('autolabel');
