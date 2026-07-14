@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Plantec · Institucional 2026 — Experiência VR</title>
 <style>
   html,body{margin:0;height:100%;background:#0a0812;overflow:hidden;font-family:'Montserrat',system-ui,sans-serif;}
@@ -43,8 +46,9 @@
   <img id="landlogo" src="assets/logo.png" alt="Plantec">
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
+  <a id="sitelink" href="https://institucional.plantec.com" target="_blank" rel="noopener">institucional.plantec.com</a>
   <div id="xrstatus"></div>
-  <p id="vstamp">v33</p>
+  <p id="vstamp">v34</p>
 </div>
 
 </div>
@@ -189,11 +193,12 @@
       animation="property: position; to: 4.74 1.88 -6.91; dir: alternate; dur: 2950; loop: true; easing: easeInOutSine"></a-sphere>
   </a-entity>
   <!-- Title text -->
-  <a-entity id="counter" text="value: 1 / 56; align: center; color: #FFD37A; width: 5; font: dejavu"
+  <a-entity id="counter" text="value: 1 / 56; align: center; color: #FFD37A; width: 5; font: exo2semibold"
      position="0 3.15 -3.25"></a-entity>
   <a-entity position="0 3.6 -3.3">
     <a-image src="#logoimg" width="2.6" height="0.592" material="transparent: true; alphaTest: 0.05"
        animation="property: position; from: 0 -0.06 0; to: 0 0.06 0; dir: alternate; dur: 3400; loop: true; easing: easeInOutSine"></a-image>
+    <a-entity text="value: institucional.plantec.com; align: center; color: #F5A800; width: 3.4; font: exo2semibold" position="0 -0.45 0"></a-entity>
   </a-entity>
 
   <!-- Slide panels (carousel window of 5) -->
@@ -311,17 +316,17 @@
 
   <!-- Menu de cenarios -->
   <a-entity id="thememenu" position="-3.3 2.0 -2.7" rotation="0 38 0">
-    <a-entity text="value: CENARIO; align: center; color: #F5A800; width: 3.2; font: dejavu" position="0 0.55 0"></a-entity>
-    <a-entity class="clickable tpill" theme-pick="name: auditorio" position="0 0.22 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Auditorio Plantec; align: center; color: #eafff4; width: 2.9; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity class="clickable tpill" theme-pick="name: aeroporto" position="0 -0.14 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Aeroporto (real); align: center; color: #eafff4; width: 2.9; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity class="clickable tpill" theme-pick="name: salao" position="0 -0.50 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Salao Nobre (real); align: center; color: #eafff4; width: 2.9; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity text="value: CENARIO; align: center; color: #F5A800; width: 3.2; font: exo2semibold" position="0 0.55 0"></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: auditorio" position="0 0.22 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Auditorio Plantec; align: center; color: #eafff4; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: aeroporto" position="0 -0.14 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Aeroporto (real); align: center; color: #eafff4; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity class="clickable tpill" theme-pick="name: salao" position="0 -0.50 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Salao Nobre (real); align: center; color: #eafff4; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
   </a-entity>
 
   <!-- Painel de som (direita, espelhando o menu) -->
   <a-entity id="soundpanel" position="3.3 2.0 -2.7" rotation="0 -38 0">
-    <a-entity text="value: SOM; align: center; color: #F5A800; width: 3.2; font: dejavu" position="0 0.55 0"></a-entity>
-    <a-entity id="mutepill" class="clickable" narr-toggle position="0 0.22 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="mutelabel" text="value: NARRACAO: ON; align: center; color: #ffffff; width: 2.9; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity id="ambpill" class="clickable" amb-toggle position="0 -0.14 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="amblabel" text="value: AMBIENTE: ON; align: center; color: #ffffff; width: 2.9; font: dejavu" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity text="value: SOM; align: center; color: #F5A800; width: 3.2; font: exo2semibold" position="0 0.55 0"></a-entity>
+    <a-entity id="mutepill" class="clickable" narr-toggle position="0 0.22 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="mutelabel" text="value: NARRACAO: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity id="ambpill" class="clickable" amb-toggle position="0 -0.14 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="amblabel" text="value: AMBIENTE: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
   </a-entity>
 
   <!-- 3D clickable arrows (mesh + handler on same entity) -->
