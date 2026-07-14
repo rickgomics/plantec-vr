@@ -215,15 +215,6 @@
        material="roughness: 0.9"></a-sphere>
     <a-entity light="type: directional; color: #fff2dd; intensity: 1.2" position="-8 6 4"></a-entity>
     <a-entity light="type: ambient; color: #223046; intensity: 0.7"></a-entity>
-    <a-dodecahedron position="-10.6 -1.3 -27.4" radius="0.59" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 22779; loop: true; easing: linear"></a-dodecahedron>
-    <a-dodecahedron position="-24.4 6.5 -20.4" radius="0.78" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 15408; loop: true; easing: linear"></a-dodecahedron>
-    <a-dodecahedron position="-4.0 -2.7 -42.6" radius="1.05" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 27547; loop: true; easing: linear"></a-dodecahedron>
-    <a-dodecahedron position="3.9 13.1 -28.0" radius="1.26" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 15013; loop: true; easing: linear"></a-dodecahedron>
-    <a-dodecahedron position="4.6 3.1 -18.6" radius="0.56" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 28065; loop: true; easing: linear"></a-dodecahedron>
-    <a-dodecahedron position="-22.0 3.5 -30.4" radius="1.24" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 23179; loop: true; easing: linear"></a-dodecahedron>
-    <a-dodecahedron position="19.0 -0.7 -29.3" radius="1.33" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 20101; loop: true; easing: linear"></a-dodecahedron>
-    <a-dodecahedron position="-24.2 8.8 -29.8" radius="1.3" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 22133; loop: true; easing: linear"></a-dodecahedron>
-    <a-dodecahedron position="10.8 3.7 -36.5" radius="1.26" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 21424; loop: true; easing: linear"></a-dodecahedron>
   </a-entity>
 
   <!-- Auditorio Plantec -->
@@ -347,48 +338,6 @@
     <a-entity id="mutepill" class="clickable" narr-toggle position="0 0.22 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="mutelabel" text="value: NARRACAO: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
     <a-entity id="ambpill" class="clickable" amb-toggle position="0 -0.14 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="amblabel" text="value: AMBIENTE: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
     <a-entity id="prespill" class="clickable" pres-toggle position="0 -0.50 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="preslabel" text="value: APRESENTACAO: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
-  </a-entity>
-
-  <!-- Moldura do slide ativo -->
-  <a-entity id="slideframe" position="0 1.6 -3.26">
-    <a-box position="0 0.985 0" width="3.48" height="0.008" depth="0.004" material="shader: flat; color: #00A99D; opacity: 0.75; transparent: true"></a-box>
-    <a-box position="0 -0.985 0" width="3.48" height="0.008" depth="0.004" material="shader: flat; color: #00A99D; opacity: 0.75; transparent: true"></a-box>
-    <a-box position="-1.736 0 0" width="0.008" height="1.978" depth="0.004" material="shader: flat; color: #00A99D; opacity: 0.75; transparent: true"></a-box>
-    <a-box position="1.736 0 0" width="0.008" height="1.978" depth="0.004" material="shader: flat; color: #00A99D; opacity: 0.75; transparent: true"></a-box>
-    <a-box position="-1.736 0.985 0.002" width="0.16" height="0.016" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
-    <a-box position="-1.736 0.985 0.002" width="0.016" height="0.16" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
-    <a-box position="1.736 0.985 0.002" width="0.16" height="0.016" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
-    <a-box position="1.736 0.985 0.002" width="0.016" height="0.16" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
-    <a-box position="-1.736 -0.985 0.002" width="0.16" height="0.016" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
-    <a-box position="-1.736 -0.985 0.002" width="0.016" height="0.16" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
-    <a-box position="1.736 -0.985 0.002" width="0.16" height="0.016" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
-    <a-box position="1.736 -0.985 0.002" width="0.016" height="0.16" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
-  </a-entity>
-
-  <!-- Painel Site (institucional em 3D) -->
-  <a-entity id="sitepanel" position="0 1.62 -3.16" visible="false">
-    <a-plane width="3.8" height="2.24" material="shader: flat; color: #120b1e; opacity: 0.97"></a-plane>
-    <a-box position="0 1.11 0.005" width="3.8" height="0.012" depth="0.004" material="shader: flat; color: #00A99D; opacity: 0.8; transparent: true"></a-box>
-    <a-box position="0 -1.11 0.005" width="3.8" height="0.012" depth="0.004" material="shader: flat; color: #00A99D; opacity: 0.8; transparent: true"></a-box>
-    <a-image src="#logoimg" position="0 0.92 0.01" width="1.5" height="0.342" material="transparent: true; alphaTest: 0.05"></a-image>
-    <a-entity text="value: Ha 39 anos distribuindo Comunicacao Unificada, Seguranca Eletronica, Redes e Energia; align: center; color: #ffffff; width: 3.2; wrapCount: 52; font: exo2semibold" position="0 0.62 0.01"></a-entity>
-    <a-entity text="value: +5.000 produtos a pronta entrega  |  +50 fabricantes parceiros  |  9 unidades; align: center; color: #F5A800; width: 2.9; wrapCount: 60; font: kelsonsans" position="0 0.40 0.01"></a-entity>
-    <a-entity text="value: PRODUTOS E SOLUCOES; align: center; color: #00E5D0; width: 2.4; font: exo2semibold" position="0 0.20 0.01"></a-entity>
-    <a-entity position="-0.85 0.02 0.01" geometry="primitive: plane; width: 1.6; height: 0.19" material="shader: flat; color: #241640; opacity: 0.95"><a-entity text="value: Automacao e Smart Home; align: center; color: #eafff4; width: 2.5; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity position="0.85 0.02 0.01" geometry="primitive: plane; width: 1.6; height: 0.19" material="shader: flat; color: #241640; opacity: 0.95"><a-entity text="value: Comunicacao e Telefonia; align: center; color: #eafff4; width: 2.5; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity position="-0.85 -0.21 0.01" geometry="primitive: plane; width: 1.6; height: 0.19" material="shader: flat; color: #241640; opacity: 0.95"><a-entity text="value: Controle de Acesso; align: center; color: #eafff4; width: 2.5; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity position="0.85 -0.21 0.01" geometry="primitive: plane; width: 1.6; height: 0.19" material="shader: flat; color: #241640; opacity: 0.95"><a-entity text="value: Energia Solar e Eletrica; align: center; color: #eafff4; width: 2.5; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity position="-0.85 -0.44 0.01" geometry="primitive: plane; width: 1.6; height: 0.19" material="shader: flat; color: #241640; opacity: 0.95"><a-entity text="value: Seguranca Eletronica; align: center; color: #eafff4; width: 2.5; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity position="0.85 -0.44 0.01" geometry="primitive: plane; width: 1.6; height: 0.19" material="shader: flat; color: #241640; opacity: 0.95"><a-entity text="value: Redes e Cabeamento; align: center; color: #eafff4; width: 2.5; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity position="-0.85 -0.67 0.01" geometry="primitive: plane; width: 1.6; height: 0.19" material="shader: flat; color: #241640; opacity: 0.95"><a-entity text="value: Ferramentas e Medicao; align: center; color: #eafff4; width: 2.5; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity position="0.85 -0.67 0.01" geometry="primitive: plane; width: 1.6; height: 0.19" material="shader: flat; color: #241640; opacity: 0.95"><a-entity text="value: Prevencao a Incendios; align: center; color: #eafff4; width: 2.5; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity id="siteopenpill" class="clickable" site-open position="-0.9 -0.94 0.01" geometry="primitive: plane; width: 1.6; height: 0.2" material="shader: flat; color: #A21585; opacity: 0.95"><a-entity text="value: ABRIR NO NAVEGADOR; align: center; color: #ffffff; width: 2.5; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
-    <a-entity id="siteclosepill" class="clickable" site-mode position="0.9 -0.94 0.01" geometry="primitive: plane; width: 1.6; height: 0.2" material="shader: flat; color: #00A99D; opacity: 0.95"><a-entity text="value: VOLTAR A APRESENTACAO; align: center; color: #ffffff; width: 2.5; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
-  </a-entity>
-
-  <!-- Pilula do site -->
-  <a-entity id="sitepill" class="clickable" site-mode position="0 0.14 -3.15" geometry="primitive: plane; width: 2.0; height: 0.24" material="shader: flat; color: #221033; opacity: 0.9">
-    <a-entity text="value: institucional.plantec.com; align: center; color: #F5A800; width: 3.2; font: kelsonsans" position="0 0 0.01"></a-entity>
   </a-entity>
 
   <!-- Setas discretas -->
@@ -887,7 +836,7 @@ AFRAME.registerComponent('pres-toggle', {
   init: function(){
     var self=this;
     function setVis(on){
-      ['arrowPrev','arrowNext','counter','slideframe'].forEach(function(id){
+      ['arrowPrev','arrowNext','counter'].forEach(function(id){
         var e=document.getElementById(id); if(e) e.setAttribute('visible', on);
       });
       if(window.DECK){
