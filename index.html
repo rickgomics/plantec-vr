@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v30</p>
+  <p id="vstamp">v31</p>
 </div>
 
 </div>
@@ -56,8 +56,8 @@
 </div>
 
 <a-scene deck ar-toggle height-fix
-  background="transparent: true"
-  renderer="antialias: true; colorManagement: true; alpha: true; exposure: 1.05"
+  background="color: #050d13"
+  renderer="antialias: true; colorManagement: true; exposure: 1.05"
   webxr="referenceSpaceType: local; requiredFeatures: local; optionalFeatures: hand-tracking"
   vr-mode-ui="enabled: false"
   loading-screen="enabled: false">
@@ -911,7 +911,11 @@ window.addEventListener('error', function(ev){
     var dbg = document.getElementById('dbg');
     var shown = groups[SPECIAL[name]];
     function bindSkyTexture(skyEl, imgId, themeName){
-      if(dbg) dbg.setAttribute('text','value', themeName+' | ok');
+      if(dbg){
+        var v = skyEl ? skyEl.getAttribute('visible') : 'NULL';
+        var m = skyEl && skyEl.getObject3D ? (skyEl.getObject3D('mesh') ? 'mesh' : 'sem-mesh') : '?';
+        dbg.setAttribute('text','value', themeName+' | el:'+(skyEl?'ok':'NULL')+' vis:'+v+' '+m);
+      }
     }
     if(shown && IMGS[name]){
       bindSkyTexture(shown, IMGS[name], name);
