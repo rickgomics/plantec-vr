@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Teste 3: cena igual a principal</title>
+<script src="assets/aframe.min.js"></script></head>
+<body>
+<a-scene background="transparent: true"
+  renderer="antialias: true; colorManagement: true; alpha: true; exposure: 1.05"
+  webxr="referenceSpaceType: local; requiredFeatures: local; optionalFeatures: hand-tracking"
+  vr-mode-ui="enabled: true">
+  <a-sky src="assets/pano.jpg"></a-sky>
+  <a-text value="TESTE 3: atributos da cena principal" position="0 2 -3" align="center" color="#ff0" width="6"></a-text>
+  <a-camera position="0 1.6 0"></a-camera>
+</a-scene>
+</body></html>
