@@ -48,7 +48,7 @@
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <a id="sitelink" href="https://institucional.plantec.com" target="_blank" rel="noopener">institucional.plantec.com</a>
   <div id="xrstatus"></div>
-  <p id="vstamp">v35</p>
+  <p id="vstamp">v36</p>
 </div>
 
 </div>
@@ -193,12 +193,11 @@
       animation="property: position; to: 4.74 1.88 -6.91; dir: alternate; dur: 2950; loop: true; easing: easeInOutSine"></a-sphere>
   </a-entity>
   <!-- Title text -->
-  <a-entity id="counter" text="value: 1 / 56; align: center; color: #FFD37A; width: 5; font: exo2semibold"
-     position="0 3.15 -3.25"></a-entity>
+  <a-entity id="counter" text="value: 1 / 56; align: center; color: #cfd8dc; width: 2.1; font: kelsonsans; opacity: 0.85"
+     position="0 0.46 -3.18"></a-entity>
   <a-entity position="0 3.6 -3.3">
     <a-image src="#logoimg" width="2.6" height="0.592" material="transparent: true; alphaTest: 0.05"
        animation="property: position; from: 0 -0.06 0; to: 0 0.06 0; dir: alternate; dur: 3400; loop: true; easing: easeInOutSine"></a-image>
-    <a-entity text="value: institucional.plantec.com; align: center; color: #F5A800; width: 3.4; font: exo2semibold" position="0 -0.45 0"></a-entity>
   </a-entity>
 
   <!-- Slide panels (carousel window of 5) -->
@@ -216,33 +215,6 @@
        material="roughness: 0.9"></a-sphere>
     <a-entity light="type: directional; color: #fff2dd; intensity: 1.2" position="-8 6 4"></a-entity>
     <a-entity light="type: ambient; color: #223046; intensity: 0.7"></a-entity>
-    <a-entity position="-9 3.2 -14" rotation="0 55 6" scale="1.0 1.0 1.0"
-       animation="property: position; to: -4 4.2 -20; dir: alternate; dur: 26000; loop: true; easing: easeInOutSine">
-      <a-cylinder rotation="90 0 0" radius="0.28" height="1.7" material="color: #d8dde6; metalness: 0.5; roughness: 0.35"></a-cylinder>
-      <a-cone position="0 0 -1.15" rotation="-90 0 0" radius-bottom="0.28" radius-top="0.02" height="0.6" material="color: #A21585; metalness: 0.4; roughness: 0.4"></a-cone>
-      <a-box position="0 -0.05 0.3" width="2.3" height="0.06" depth="0.55" material="color: #00A99D; metalness: 0.4; roughness: 0.45"></a-box>
-      <a-box position="0 0.32 0.62" width="0.06" height="0.55" depth="0.45" material="color: #00A99D"></a-box>
-      <a-cone position="0 0 1.05" rotation="90 0 0" radius-bottom="0.2" radius-top="0.3" height="0.35" material="shader: flat; color: #00E5D0; opacity: 0.95"></a-cone>
-      <a-sphere position="0 0.16 -0.45" radius="0.16" material="color: #0a2030; metalness: 0.9; roughness: 0.1"></a-sphere>
-    </a-entity>
-    <a-entity position="10 1.4 -18" rotation="0 -40 -4" scale="1.4 1.4 1.4"
-       animation="property: position; to: 5 2.6 -11; dir: alternate; dur: 32000; loop: true; easing: easeInOutSine">
-      <a-cylinder rotation="90 0 0" radius="0.28" height="1.7" material="color: #d8dde6; metalness: 0.5; roughness: 0.35"></a-cylinder>
-      <a-cone position="0 0 -1.15" rotation="-90 0 0" radius-bottom="0.28" radius-top="0.02" height="0.6" material="color: #A21585; metalness: 0.4; roughness: 0.4"></a-cone>
-      <a-box position="0 -0.05 0.3" width="2.3" height="0.06" depth="0.55" material="color: #F5A800; metalness: 0.4; roughness: 0.45"></a-box>
-      <a-box position="0 0.32 0.62" width="0.06" height="0.55" depth="0.45" material="color: #F5A800"></a-box>
-      <a-cone position="0 0 1.05" rotation="90 0 0" radius-bottom="0.2" radius-top="0.3" height="0.35" material="shader: flat; color: #00E5D0; opacity: 0.95"></a-cone>
-      <a-sphere position="0 0.16 -0.45" radius="0.16" material="color: #0a2030; metalness: 0.9; roughness: 0.1"></a-sphere>
-    </a-entity>
-    <a-entity position="-4 7.5 -26" rotation="0 20 10" scale="2.2 2.2 2.2"
-       animation="property: position; to: 4 6.5 -30; dir: alternate; dur: 40000; loop: true; easing: easeInOutSine">
-      <a-cylinder rotation="90 0 0" radius="0.28" height="1.7" material="color: #d8dde6; metalness: 0.5; roughness: 0.35"></a-cylinder>
-      <a-cone position="0 0 -1.15" rotation="-90 0 0" radius-bottom="0.28" radius-top="0.02" height="0.6" material="color: #A21585; metalness: 0.4; roughness: 0.4"></a-cone>
-      <a-box position="0 -0.05 0.3" width="2.3" height="0.06" depth="0.55" material="color: #A21585; metalness: 0.4; roughness: 0.45"></a-box>
-      <a-box position="0 0.32 0.62" width="0.06" height="0.55" depth="0.45" material="color: #A21585"></a-box>
-      <a-cone position="0 0 1.05" rotation="90 0 0" radius-bottom="0.2" radius-top="0.3" height="0.35" material="shader: flat; color: #00E5D0; opacity: 0.95"></a-cone>
-      <a-sphere position="0 0.16 -0.45" radius="0.16" material="color: #0a2030; metalness: 0.9; roughness: 0.1"></a-sphere>
-    </a-entity>
     <a-dodecahedron position="-10.6 -1.3 -27.4" radius="0.59" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 22779; loop: true; easing: linear"></a-dodecahedron>
     <a-dodecahedron position="-24.4 6.5 -20.4" radius="0.78" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 15408; loop: true; easing: linear"></a-dodecahedron>
     <a-dodecahedron position="-4.0 -2.7 -42.6" radius="1.05" material="color: #6b6f7a; roughness: 0.95" animation="property: rotation; to: 360 360 0; dur: 27547; loop: true; easing: linear"></a-dodecahedron>
@@ -374,16 +346,22 @@
     <a-entity text="value: SOM; align: center; color: #F5A800; width: 3.2; font: exo2semibold" position="0 0.55 0"></a-entity>
     <a-entity id="mutepill" class="clickable" narr-toggle position="0 0.22 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="mutelabel" text="value: NARRACAO: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
     <a-entity id="ambpill" class="clickable" amb-toggle position="0 -0.14 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="amblabel" text="value: AMBIENTE: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
+    <a-entity id="prespill" class="clickable" pres-toggle position="0 -0.50 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="preslabel" text="value: APRESENTACAO: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
+  </a-entity>
+
+  <!-- Pilula do site -->
+  <a-entity id="sitepill" class="clickable" site-open position="0 0.14 -3.15" geometry="primitive: plane; width: 2.0; height: 0.24" material="shader: flat; color: #221033; opacity: 0.9">
+    <a-entity text="value: institucional.plantec.com; align: center; color: #F5A800; width: 3.2; font: kelsonsans" position="0 0 0.01"></a-entity>
   </a-entity>
 
   <!-- 3D clickable arrows (mesh + handler on same entity) -->
-  <a-entity arrow-btn="dir: prev" class="clickable" position="-2.05 0.6 -3"
+  <a-entity id="arrowPrev" arrow-btn="dir: prev" class="clickable" position="-2.05 0.6 -3"
      geometry="primitive: circle; radius: 0.3"
      material="shader: flat; color: #F5A800; opacity: 0.92; transparent: true">
     <a-triangle vertex-a="0.11 0.15 0" vertex-b="0.11 -0.15 0" vertex-c="-0.16 0 0"
        material="shader: flat; color: #1a1206; side: double" position="0 0 0.01"></a-triangle>
   </a-entity>
-  <a-entity arrow-btn="dir: next" class="clickable" position="2.05 0.6 -3"
+  <a-entity id="arrowNext" arrow-btn="dir: next" class="clickable" position="2.05 0.6 -3"
      geometry="primitive: circle; radius: 0.3"
      material="shader: flat; color: #F5A800; opacity: 0.92; transparent: true">
     <a-triangle vertex-a="-0.11 0.15 0" vertex-b="-0.11 -0.15 0" vertex-c="0.16 0 0"
@@ -419,6 +397,7 @@ AFRAME.registerComponent('deck', {
     this.index = 0;
     this.total = window.SLIDES.length;
     this.busy = false;
+    this.power = true;
     this.planes = ['p-l2','p-l1','p-c','p-r1','p-r2'].map(function(id){return document.getElementById(id);});
     this.layouts = [
       {off:-2, pos:{x:-4.9,y:1.6,z:-5.2}, rotY: 40, s:0.42, op:0.30},
@@ -437,8 +416,8 @@ AFRAME.registerComponent('deck', {
       else if (e.key === 'End') { self.goto(self.total-1); }
     });
   },
-  next: function () { if (this.index < this.total - 1) { this.index++; this.render(); if(window.AUDIO) window.AUDIO.whoosh(1); } },
-  prev: function () { if (this.index > 0) { this.index--; this.render(); if(window.AUDIO) window.AUDIO.whoosh(-1); } },
+  next: function () { if (this.power===false) return; if (this.index < this.total - 1) { this.index++; this.render(); if(window.AUDIO) window.AUDIO.whoosh(1); } },
+  prev: function () { if (this.power===false) return; if (this.index > 0) { this.index--; this.render(); if(window.AUDIO) window.AUDIO.whoosh(-1); } },
   goto: function (i) { if (i>=0 && i<this.total){ this.index=i; this.render(); } },
   render: function () {
     var self = this;
@@ -455,7 +434,7 @@ AFRAME.registerComponent('deck', {
     });
     if (window.NARR) window.NARR.play(this.index);
     var ctr = document.getElementById('counter');
-    if (ctr) ctr.setAttribute('text', 'value', (this.index+1) + '  /  ' + this.total);
+    if (ctr) ctr.setAttribute('text', 'value', (this.index+1) + ' / ' + this.total);
     // sync 2D hud
     var h = document.getElementById('hud-counter');
     if (h) h.textContent = (this.index+1) + ' / ' + this.total;
@@ -480,7 +459,7 @@ AFRAME.registerComponent('nav-controller', {
           if(window.AUDIO) window.AUDIO.whoosh(1);
           return true;
         }
-        if(t.components && t.components['amb-toggle']){
+        if(t.components && (t.components['amb-toggle'] || t.components['pres-toggle'] || t.components['site-open'])){
           t.emit('click'); return true;
         }
         if(t.components && t.components['narr-toggle']){
@@ -846,6 +825,48 @@ AFRAME.registerComponent('amb-toggle', {
       var pill=document.getElementById('ambpill');
       if(pill) pill.setAttribute('material','color', off?'#221033':'#00A99D');
     }
+    this.el.addEventListener('click', go);
+    this.el.addEventListener('mousedown', go);
+    this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.08 1.08 1.08'); });
+    this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
+  }
+});
+
+
+// ---------- Abrir site institucional ----------
+AFRAME.registerComponent('site-open', {
+  init: function(){
+    var self=this;
+    function go(){ try{ window.open('https://institucional.plantec.com','_blank'); }catch(e){} }
+    this.el.addEventListener('click', go);
+    this.el.addEventListener('mousedown', go);
+    this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.06 1.06 1.06'); });
+    this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
+  }
+});
+
+// ---------- Liga/desliga a apresentacao ----------
+AFRAME.registerComponent('pres-toggle', {
+  init: function(){
+    var self=this;
+    function setVis(on){
+      ['arrowPrev','arrowNext','counter'].forEach(function(id){
+        var e=document.getElementById(id); if(e) e.setAttribute('visible', on);
+      });
+      if(window.DECK){
+        window.DECK.power = on;
+        if(on){ window.DECK.render(); }
+        else { window.DECK.planes.forEach(function(pl){ pl.setAttribute('visible', false); }); }
+      }
+      if(!on && window.NARR) window.NARR.stop();
+      if(on && window.NARR && window.DECK && !window.NARR.isMuted()) window.NARR.play(window.DECK.index);
+      var lbl=document.getElementById('preslabel');
+      if(lbl) lbl.setAttribute('text','value', on?'APRESENTACAO: ON':'APRESENTACAO: OFF');
+      var pill=document.getElementById('prespill');
+      if(pill) pill.setAttribute('material','color', on?'#00A99D':'#221033');
+    }
+    var on=true;
+    function go(){ on=!on; setVis(on); }
     this.el.addEventListener('click', go);
     this.el.addEventListener('mousedown', go);
     this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.08 1.08 1.08'); });
