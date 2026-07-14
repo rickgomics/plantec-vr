@@ -234,10 +234,10 @@
     <a-cylinder position="0 0.09 -3.2" radius="4.2" height="0.18" material="color: #161022; roughness: 0.5"></a-cylinder>
     <a-torus position="0 0.19 -3.2" rotation="-90 0 0" radius="4.2" radius-tubular="0.035" material="shader: flat; color: #00A99D; opacity: 0.9"></a-torus>
     <a-plane position="0 1.72 -3.55" width="4.6" height="2.7" material="color: #120c1e; roughness: 0.8"></a-plane>
-    <a-box position="0 3.10 -3.54" width="4.7" height="0.07" depth="0.05" material="shader: flat; color: #F5A800"></a-box>
-    <a-box position="0 0.34 -3.54" width="4.7" height="0.07" depth="0.05" material="shader: flat; color: #F5A800"></a-box>
-    <a-box position="-2.33 1.72 -3.54" width="0.07" height="2.83" depth="0.05" material="shader: flat; color: #F5A800"></a-box>
-    <a-box position="2.33 1.72 -3.54" width="0.07" height="2.83" depth="0.05" material="shader: flat; color: #F5A800"></a-box>
+    <a-box position="0 3.10 -3.54" width="4.7" height="0.025" depth="0.03" material="shader: flat; color: #F5A800; opacity: 0.85; transparent: true"></a-box>
+    <a-box position="0 0.34 -3.54" width="4.7" height="0.025" depth="0.03" material="shader: flat; color: #F5A800; opacity: 0.85; transparent: true"></a-box>
+    <a-box position="-2.33 1.72 -3.54" width="0.025" height="2.83" depth="0.03" material="shader: flat; color: #F5A800; opacity: 0.85; transparent: true"></a-box>
+    <a-box position="2.33 1.72 -3.54" width="0.025" height="2.83" depth="0.03" material="shader: flat; color: #F5A800; opacity: 0.85; transparent: true"></a-box>
     <a-cylinder position="0 3 -3" radius="8.6" height="6.2" theta-start="115" theta-length="130" open-ended="true" material="color: #150e26; side: double; roughness: 0.9"></a-cylinder>
     <a-box position="-7.79 3 -6.63" rotation="0 65.0 0" width="0.12" height="5.6" depth="0.06" material="shader: flat; color: #00A99D; opacity: 0.85"></a-box>
     <a-box position="-6.97 3 -8.03" rotation="0 54.2 0" width="0.12" height="5.6" depth="0.06" material="shader: flat; color: #A21585; opacity: 0.85"></a-box>
@@ -349,23 +349,39 @@
     <a-entity id="prespill" class="clickable" pres-toggle position="0 -0.50 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="preslabel" text="value: APRESENTACAO: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
   </a-entity>
 
+  <!-- Moldura do slide ativo -->
+  <a-entity id="slideframe" position="0 1.6 -3.26">
+    <a-box position="0 0.985 0" width="3.48" height="0.008" depth="0.004" material="shader: flat; color: #00A99D; opacity: 0.75; transparent: true"></a-box>
+    <a-box position="0 -0.985 0" width="3.48" height="0.008" depth="0.004" material="shader: flat; color: #00A99D; opacity: 0.75; transparent: true"></a-box>
+    <a-box position="-1.736 0 0" width="0.008" height="1.978" depth="0.004" material="shader: flat; color: #00A99D; opacity: 0.75; transparent: true"></a-box>
+    <a-box position="1.736 0 0" width="0.008" height="1.978" depth="0.004" material="shader: flat; color: #00A99D; opacity: 0.75; transparent: true"></a-box>
+    <a-box position="-1.736 0.985 0.002" width="0.16" height="0.016" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
+    <a-box position="-1.736 0.985 0.002" width="0.016" height="0.16" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
+    <a-box position="1.736 0.985 0.002" width="0.16" height="0.016" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
+    <a-box position="1.736 0.985 0.002" width="0.016" height="0.16" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
+    <a-box position="-1.736 -0.985 0.002" width="0.16" height="0.016" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
+    <a-box position="-1.736 -0.985 0.002" width="0.016" height="0.16" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
+    <a-box position="1.736 -0.985 0.002" width="0.16" height="0.016" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
+    <a-box position="1.736 -0.985 0.002" width="0.016" height="0.16" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
+  </a-entity>
+
   <!-- Pilula do site -->
   <a-entity id="sitepill" class="clickable" site-open position="0 0.14 -3.15" geometry="primitive: plane; width: 2.0; height: 0.24" material="shader: flat; color: #221033; opacity: 0.9">
     <a-entity text="value: institucional.plantec.com; align: center; color: #F5A800; width: 3.2; font: kelsonsans" position="0 0 0.01"></a-entity>
   </a-entity>
 
-  <!-- 3D clickable arrows (mesh + handler on same entity) -->
-  <a-entity id="arrowPrev" arrow-btn="dir: prev" class="clickable" position="-2.05 0.6 -3"
-     geometry="primitive: circle; radius: 0.3"
-     material="shader: flat; color: #F5A800; opacity: 0.92; transparent: true">
-    <a-triangle vertex-a="0.11 0.15 0" vertex-b="0.11 -0.15 0" vertex-c="-0.16 0 0"
-       material="shader: flat; color: #1a1206; side: double" position="0 0 0.01"></a-triangle>
+  <!-- Setas discretas -->
+  <a-entity id="arrowPrev" arrow-btn="dir: prev" class="clickable" position="-2.12 1.6 -3.1">
+    <a-circle radius="0.13" material="shader: flat; color: #ffffff; opacity: 0.07; transparent: true"></a-circle>
+    <a-ring radius-inner="0.125" radius-outer="0.135" material="shader: flat; color: #F5A800; opacity: 0.55; transparent: true"></a-ring>
+    <a-box position="0.015 0.032 0.01" rotation="0 0 -48" width="0.09" height="0.014" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
+    <a-box position="0.015 -0.032 0.01" rotation="0 0 48" width="0.09" height="0.014" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
   </a-entity>
-  <a-entity id="arrowNext" arrow-btn="dir: next" class="clickable" position="2.05 0.6 -3"
-     geometry="primitive: circle; radius: 0.3"
-     material="shader: flat; color: #F5A800; opacity: 0.92; transparent: true">
-    <a-triangle vertex-a="-0.11 0.15 0" vertex-b="-0.11 -0.15 0" vertex-c="0.16 0 0"
-       material="shader: flat; color: #1a1206; side: double" position="0 0 0.01"></a-triangle>
+  <a-entity id="arrowNext" arrow-btn="dir: next" class="clickable" position="2.12 1.6 -3.1">
+    <a-circle radius="0.13" material="shader: flat; color: #ffffff; opacity: 0.07; transparent: true"></a-circle>
+    <a-ring radius-inner="0.125" radius-outer="0.135" material="shader: flat; color: #F5A800; opacity: 0.55; transparent: true"></a-ring>
+    <a-box position="-0.015 0.032 0.01" rotation="0 0 48" width="0.09" height="0.014" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
+    <a-box position="-0.015 -0.032 0.01" rotation="0 0 -48" width="0.09" height="0.014" depth="0.004" material="shader: flat; color: #F5A800"></a-box>
   </a-entity>
 
   <!-- Camera rig + controllers -->
@@ -850,7 +866,7 @@ AFRAME.registerComponent('pres-toggle', {
   init: function(){
     var self=this;
     function setVis(on){
-      ['arrowPrev','arrowNext','counter'].forEach(function(id){
+      ['arrowPrev','arrowNext','counter','slideframe'].forEach(function(id){
         var e=document.getElementById(id); if(e) e.setAttribute('visible', on);
       });
       if(window.DECK){
