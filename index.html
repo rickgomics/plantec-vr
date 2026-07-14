@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v31</p>
+  <p id="vstamp">v32</p>
 </div>
 
 </div>
@@ -921,6 +921,11 @@ window.addEventListener('error', function(ev){
       bindSkyTexture(shown, IMGS[name], name);
     } else if(dbg){ dbg.setAttribute('text','value', name); }
     if(SPECIAL[name]){
+      var sceneEl = document.querySelector('a-scene');
+      if(sceneEl){
+        sceneEl.removeAttribute('fog');
+        if(sceneEl.object3D) sceneEl.object3D.fog = null;
+      }
       if(env) env.setAttribute('visible', false);
       if(name==='sponza'){
         var holder=document.getElementById('sponzamodel');
