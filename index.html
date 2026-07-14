@@ -669,7 +669,6 @@ AFRAME.registerComponent('theme-pick', {
       if (window.AUDIO) window.AUDIO.whoosh(1);
     }
     this.el.addEventListener('click', go);
-    this.el.addEventListener('mousedown', go);
     this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.08 1.08 1.08'); });
     this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
   }
@@ -750,7 +749,6 @@ AFRAME.registerComponent('narr-toggle', {
     var self=this;
     function go(){ if(window.NARR) window.NARR.toggle(); }
     this.el.addEventListener('click', go);
-    this.el.addEventListener('mousedown', go);
     this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.08 1.08 1.08'); });
     this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
   }
@@ -814,7 +812,6 @@ AFRAME.registerComponent('amb-toggle', {
       if(pill) pill.setAttribute('material','color', off?'#221033':'#00A99D');
     }
     this.el.addEventListener('click', go);
-    this.el.addEventListener('mousedown', go);
     this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.08 1.08 1.08'); });
     this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
   }
@@ -827,7 +824,6 @@ AFRAME.registerComponent('site-open', {
     var self=this;
     function go(){ try{ window.open('https://institucional.plantec.com','_blank'); }catch(e){} }
     this.el.addEventListener('click', go);
-    this.el.addEventListener('mousedown', go);
     this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.06 1.06 1.06'); });
     this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
   }
@@ -858,7 +854,6 @@ AFRAME.registerComponent('pres-toggle', {
     window.SET_PRES = function(v){ window.__presOn = v; setVis(v); };
     function go(){ window.SET_PRES(!window.__presOn); }
     this.el.addEventListener('click', go);
-    this.el.addEventListener('mousedown', go);
     this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.08 1.08 1.08'); });
     this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
   }
@@ -879,7 +874,6 @@ AFRAME.registerComponent('site-mode', {
       if(window.AUDIO) window.AUDIO.whoosh(window.__siteOn?1:-1);
     }
     this.el.addEventListener('click', go);
-    this.el.addEventListener('mousedown', go);
     this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.06 1.06 1.06'); });
     this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
   }
@@ -921,7 +915,6 @@ AFRAME.registerComponent('auto-toggle', {
     var self=this;
     function go(){ window.SET_AUTO(!window.AUTO); }
     this.el.addEventListener('click', go);
-    this.el.addEventListener('mousedown', go);
     this.el.addEventListener('mouseenter', function(){ self.el.setAttribute('scale','1.08 1.08 1.08'); });
     this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
   }
