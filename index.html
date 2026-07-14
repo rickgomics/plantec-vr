@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v29</p>
+  <p id="vstamp">v30</p>
 </div>
 
 </div>
@@ -121,10 +121,6 @@
 <img id="img55" src="assets/s-56.jpg" crossorigin="anonymous">
 <img id="pano360" src="assets/pano.jpg" crossorigin="anonymous">
 <img id="logoimg" src="assets/logo.png" crossorigin="anonymous">
-<img id="skysalao" src="assets/sky_salao.jpg" crossorigin="anonymous">
-<img id="skypraca" src="assets/sky_praca.jpg" crossorigin="anonymous">
-<img id="skymetro" src="assets/sky_metro.jpg" crossorigin="anonymous">
-<img id="skyaero" src="assets/sky_aeroporto.jpg" crossorigin="anonymous">
   </a-assets>
 
   <!-- Lighting -->
@@ -134,7 +130,11 @@
   <a-entity light="type: point; color: #F5A800; intensity: 0.5; distance: 14" position="6 2 -4"></a-entity>
 
   <!-- Real 360 photo sky (hidden unless theme=real) -->
-  <a-entity id="photodome" photo-dome></a-entity>
+  <a-sky id="sky-real" src="assets/pano.jpg" visible="false" rotation="0 -60 0"></a-sky>
+  <a-sky id="sky-salao" src="assets/sky_salao.jpg" visible="false"></a-sky>
+  <a-sky id="sky-praca" src="assets/sky_praca.jpg" visible="false" rotation="0 -90 0"></a-sky>
+  <a-sky id="sky-metro" src="assets/sky_metro.jpg" visible="false"></a-sky>
+  <a-sky id="sky-aero" src="assets/sky_aeroporto.jpg" visible="false" rotation="0 180 0"></a-sky>
 
   <!-- Virtual world environment (VR) -->
   <a-entity id="env" environment="preset: starry; seed: 12; ground: hills; groundYScale: 3; groundColor: #241640; groundColor2: #120b22; groundTexture: walkernoise; dressing: towers; dressingAmount: 60; dressingColor: #00A99D; dressingScale: 4; dressingVariance: 12 5 12; grid: dots; gridColor: #F5A800; fog: 0.6; skyType: atmosphere; lightPosition: 0.6 0.35 -1"></a-entity>
@@ -506,7 +506,7 @@ window.addEventListener('DOMContentLoaded', function(){
 AFRAME.registerComponent('ar-toggle', {
   init: function () {
     var sc = this.el;
-    var ids = ['env', 'photodome', 'auditorium', 'sponzaenv'];
+    var ids = ['env', 'sky-real', 'sky-salao', 'sky-praca', 'sky-metro', 'sky-aero', 'auditorium', 'sponzaenv'];
     function setEnv(show) {
       if (show && window.APPLY_THEME) { window.APPLY_THEME(); return; }
       ids.forEach(function (id) {
@@ -900,31 +900,18 @@ window.addEventListener('error', function(ev){
     });
   }
   function apply(name){
-    var SPECIAL = { real: 'photodome', salao: 'photodome', praca: 'photodome', metro: 'photodome', aeroporto: 'photodome', auditorio: 'auditorium', sponza: 'sponzaenv' };
+    var SPECIAL = { real: 'sky-real', salao: 'sky-salao', praca: 'sky-praca', metro: 'sky-metro', aeroporto: 'sky-aero', auditorio: 'auditorium', sponza: 'sponzaenv' };
     if(!SPECIAL[name] && !THEMES[name]) return;
     current = name;
     var env = document.getElementById('env');
     var groups = {};
-    ['photodome','auditorium','sponzaenv'].forEach(function(k){ groups[k]=document.getElementById(k); });
+    ['sky-real','sky-salao','sky-praca','sky-metro','sky-aero','auditorium','sponzaenv'].forEach(function(k){ groups[k]=document.getElementById(k); });
     Object.keys(groups).forEach(function(k){ if(groups[k]) groups[k].setAttribute('visible', SPECIAL[name]===k); });
     var IMGS = { real:'pano360', salao:'skysalao', praca:'skypraca', metro:'skymetro', aeroporto:'skyaero' };
     var dbg = document.getElementById('dbg');
     var shown = groups[SPECIAL[name]];
-    function bindSkyTexture(domeEl, imgId, themeName){
-      var im = document.getElementById(imgId);
-      if(!im){ if(dbg) dbg.setAttribute('text','value', themeName+' | img NAO ACHADA'); return; }
-      var rots = { pano360: -60, skysalao: 0, skypraca: -90, skymetro: 0, skyaero: 180 };
-      function doBind(){
-        try{
-          var comp = domeEl.components['photo-dome'];
-          if(!comp){ domeEl.addEventListener('loaded', doBind, {once:true}); return; }
-          comp.setImage(im);
-          domeEl.setAttribute('rotation', {x:0, y:(rots[imgId]||0), z:0});
-          if(dbg) dbg.setAttribute('text','value', themeName+' | dome '+im.naturalWidth+'x'+im.naturalHeight+' ok');
-        }catch(e){ if(dbg) dbg.setAttribute('text','value', themeName+' | ERRO: '+e.message); }
-      }
-      if(im.complete && im.naturalWidth>0){ doBind(); }
-      else { im.addEventListener('load', doBind, {once:true}); if(dbg) dbg.setAttribute('text','value', themeName+' | aguardando img'); }
+    function bindSkyTexture(skyEl, imgId, themeName){
+      if(dbg) dbg.setAttribute('text','value', themeName+' | ok');
     }
     if(shown && IMGS[name]){
       bindSkyTexture(shown, IMGS[name], name);
