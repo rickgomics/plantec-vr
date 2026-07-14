@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v25</p>
+  <p id="vstamp">v26</p>
 </div>
 
 </div>
@@ -753,6 +753,26 @@ AFRAME.registerComponent('narr-toggle', {
     this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
   }
 });
+
+// ---------- Patch: bug do A-Frame com controles Quest 3/Pro ----------
+// onButtonChangedV3orPROorPlus le buttonMeshes[...].quaternion antes do
+// modelo do controle carregar. Protegemos os handlers contra isso.
+(function(){
+  function guard(compName){
+    var reg = AFRAME.components && AFRAME.components[compName];
+    if(!reg || !reg.Component) return;
+    var proto = reg.Component.prototype;
+    Object.keys(proto).forEach(function(k){
+      if(k.indexOf('onButtonChanged') === 0 && typeof proto[k] === 'function'){
+        var orig = proto[k];
+        proto[k] = function(){
+          try { return orig.apply(this, arguments); } catch(e) {}
+        };
+      }
+    });
+  }
+  ['oculus-touch-controls','meta-touch-controls','tracked-controls'].forEach(guard);
+})();
 </script>
 <script>
 // boot progress + fade
@@ -794,7 +814,10 @@ window.addEventListener('error', function(ev){
       el.style.cssText='position:fixed;bottom:90px;left:8px;right:8px;z-index:99999;background:rgba(120,0,0,.85);color:#fff;font:12px monospace;padding:8px 10px;border-radius:8px;max-height:30vh;overflow:auto;';
       document.body.appendChild(el); }
     var st = (ev.error && ev.error.stack) ? ev.error.stack.split('\n').slice(0,3).join(' << ') : '';
-    el.textContent += (ev.message||'erro') + ' @ ' + (ev.filename||'').split('/').pop() + ':' + (ev.lineno||'') + (st?' || '+st.slice(0,220):'') + '\n';
+    var msg = (ev.message||'erro') + ' @ ' + (ev.filename||'').split('/').pop() + ':' + (ev.lineno||'') + (st?' || '+st.slice(0,220):'');
+    if(el.__last === msg){ return; }
+    el.__last = msg;
+    el.textContent += msg + '\n';
   }catch(e){}
 });
 </script>
