@@ -48,7 +48,7 @@
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <a id="sitelink" href="https://institucional.plantec.com" target="_blank" rel="noopener">institucional.plantec.com</a>
   <div id="xrstatus"></div>
-  <p id="vstamp">v45</p>
+  <p id="vstamp">v46</p>
 </div>
 
 </div>
@@ -195,7 +195,7 @@
   <!-- Title text -->
   <a-entity id="counter" text="value: 1 / 56; align: center; color: #cfd8dc; width: 2.1; font: kelsonsans; opacity: 0.85"
      position="0 0.46 -3.18"></a-entity>
-  <a-entity position="0 3.6 -3.3">
+  <a-entity id="logowrap" position="0 3.6 -3.3">
     <a-image src="#logoimg" width="2.6" height="0.592" material="transparent: true; alphaTest: 0.05"
        animation="property: position; from: 0 -0.06 0; to: 0 0.06 0; dir: alternate; dur: 3400; loop: true; easing: easeInOutSine"></a-image>
   </a-entity>
@@ -358,6 +358,7 @@
   <!-- Camera rig + controllers -->
   <a-entity id="rig" position="0 0 0">
     <a-camera wasd-controls="enabled: false" look-controls="pointerLockEnabled: false" position="0 1.6 0">
+      <a-sphere id="fader" radius="0.4" material="shader: flat; color: #000; opacity: 0; side: back; transparent: true" position="0 0 0"></a-sphere>
       <a-entity cursor="fuse: false; rayOrigin: mouse"
                 raycaster="objects: .clickable; far: 30"></a-entity>
     </a-camera>
@@ -421,6 +422,7 @@ AFRAME.registerComponent('deck', {
     });
     if (window.NARR) window.NARR.play(this.index);
     if (window.__onSlideShown) window.__onSlideShown();
+    if (this.index === this.total - 1 && window.FINALE) window.FINALE();
     var ctr = document.getElementById('counter');
     if (ctr) ctr.setAttribute('text', 'value', (this.index+1) + ' / ' + this.total);
     // sync 2D hud
@@ -636,6 +638,19 @@ AFRAME.registerComponent('height-fix', {
   }
   var ambOff=false;
   window.AUDIO = {
+    sting: function(){
+      if(!ctx || !master) return;
+      var t=ctx.currentTime;
+      [523.25, 659.25, 783.99, 1046.5].forEach(function(f,i){
+        var o=ctx.createOscillator(), g=ctx.createGain();
+        o.type='triangle'; o.frequency.value=f;
+        g.gain.setValueAtTime(0.0001, t+i*0.09);
+        g.gain.exponentialRampToValueAtTime(0.12, t+i*0.09+0.04);
+        g.gain.exponentialRampToValueAtTime(0.0001, t+i*0.09+0.9);
+        o.connect(g); g.connect(master);
+        o.start(t+i*0.09); o.stop(t+i*0.09+1.0);
+      });
+    },
     toggleAmbient: function(){ ambOff=!ambOff; if(master&&ctx) master.gain.linearRampToValueAtTime(ambOff?0:0.55, ctx.currentTime+0.3); return ambOff; },
     duck: function(on){ if(master && !ambOff) master.gain.linearRampToValueAtTime(on?0.16:0.55, ctx.currentTime+0.4); },
     resume: function(){ if(ctx&&ctx.state!=='running'){ ctx.resume(); } },
@@ -936,6 +951,88 @@ AFRAME.registerComponent('auto-toggle', {
     this.el.addEventListener('mouseleave', function(){ self.el.setAttribute('scale','1 1 1'); });
   }
 });
+
+
+// ---------- Final apoteotico ----------
+window.FINALE = (function(){
+  var last = 0;
+  return function(){
+    var now = Date.now();
+    if(now - last < 12000) return;
+    last = now;
+    if(window.AUDIO && window.AUDIO.sting) window.AUDIO.sting();
+    var sc = document.querySelector('a-scene');
+    if(!sc) return;
+    var cols = ['#A21585','#00A99D','#F5A800','#ffffff'];
+    for(var i=0;i<48;i++){
+      (function(i){
+        var e = document.createElement('a-plane');
+        var x = (Math.random()*6-3).toFixed(2);
+        var z = (-1.8 - Math.random()*2.6).toFixed(2);
+        var y0 = (4 + Math.random()*2).toFixed(2);
+        e.setAttribute('width','0.055'); e.setAttribute('height','0.1');
+        e.setAttribute('position', x+' '+y0+' '+z);
+        e.setAttribute('material','shader: flat; color: '+cols[i%4]+'; side: double');
+        e.setAttribute('animation__fall','property: position; to: '+x+' -0.2 '+z+'; dur: '+Math.round(2600+Math.random()*2400)+'; easing: easeInQuad');
+        e.setAttribute('animation__spin','property: rotation; to: '+Math.round(Math.random()*720-360)+' '+Math.round(Math.random()*720)+' 0; dur: 2800; loop: true; easing: linear');
+        sc.appendChild(e);
+        setTimeout(function(){ if(e.parentNode) e.parentNode.removeChild(e); }, 5800);
+      })(i);
+    }
+  };
+})();
+
+// ---------- Abertura cinematografica ----------
+AFRAME.registerComponent('intro-cine', {
+  init: function(){
+    var done = false, sc = this.el;
+    function setVis(ids, v){ ids.forEach(function(id){ var e=document.getElementById(id); if(e) e.setAttribute('visible', v); }); }
+    sc.addEventListener('enter-vr', function(){
+      if(done || window.__presOn === false) return;
+      done = true;
+      try{
+        var planes = (window.DECK && window.DECK.planes) ? window.DECK.planes : [];
+        var orig = planes.map(function(p){ var q=p.getAttribute('position'); return q.x+' '+q.y+' '+q.z; });
+        planes.forEach(function(p){
+          var q=p.getAttribute('position');
+          var ox = Math.abs(q.x)<0.01 ? q.x : q.x*2.4;
+          var oz = Math.abs(q.x)<0.01 ? q.z-5 : q.z-1.6;
+          p.setAttribute('position', {x:ox, y:q.y, z:oz});
+          p.setAttribute('visible', false);
+        });
+        setVis(['arrowPrev','arrowNext','counter','thememenu','soundpanel'], false);
+        if(window.NARR) window.NARR.stop();
+        var lw = document.getElementById('logowrap');
+        if(lw){ lw.setAttribute('position','0 1.9 -2.7'); lw.setAttribute('scale','1.35 1.35 1.35'); }
+        setTimeout(function(){
+          if(lw){
+            lw.setAttribute('animation__mv','property: position; to: 0 3.6 -3.3; dur: 950; easing: easeInOutQuad');
+            lw.setAttribute('animation__sc','property: scale; to: 1 1 1; dur: 950; easing: easeInOutQuad');
+          }
+        }, 1500);
+        setTimeout(function(){
+          planes.forEach(function(p,i){
+            setTimeout(function(){
+              p.setAttribute('visible', true);
+              p.setAttribute('animation__intro','property: position; to: '+orig[i]+'; dur: 760; easing: easeOutCubic');
+            }, i*90);
+          });
+        }, 2250);
+        setTimeout(function(){
+          ['thememenu','soundpanel'].forEach(function(id){
+            var e=document.getElementById(id);
+            if(e){ e.setAttribute('scale','0.001 0.001 0.001'); e.setAttribute('visible', true);
+                   e.setAttribute('animation__pop','property: scale; to: 1 1 1; dur: 380; easing: easeOutBack'); }
+          });
+        }, 3150);
+        setTimeout(function(){
+          setVis(['arrowPrev','arrowNext','counter'], true);
+          if(window.NARR && window.DECK && !window.NARR.isMuted()) window.NARR.play(window.DECK.index);
+        }, 3650);
+      }catch(e){}
+    });
+  }
+});
 </script>
 <script>
 // boot progress + fade
@@ -1036,7 +1133,20 @@ window.addEventListener('error', function(ev){
       }
     });
   }
+  var __fading=false, __firstApply=true;
   function apply(name){
+    if(__firstApply){ __firstApply=false; applyNow(name); return; }
+    var f=document.getElementById('fader');
+    if(!f || __fading){ applyNow(name); return; }
+    __fading=true;
+    f.setAttribute('animation__in','property: material.opacity; to: 1; dur: 140; easing: easeInQuad');
+    setTimeout(function(){
+      applyNow(name);
+      f.setAttribute('animation__out','property: material.opacity; to: 0; dur: 280; easing: easeOutQuad');
+      setTimeout(function(){ __fading=false; }, 320);
+    }, 160);
+  }
+  function applyNow(name){
     var SPECIAL = { salao: 'sky-salao', aeroporto: 'sky-aero', auditorio: 'auditorium', espaco: 'spacescene' };
     if(!SPECIAL[name] && !THEMES[name]) return;
     current = name;
