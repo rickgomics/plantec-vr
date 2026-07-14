@@ -45,7 +45,7 @@
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
   <div id="xrstatus"></div>
-  <p id="vstamp">v26</p>
+  <p id="vstamp">v27</p>
 </div>
 
 </div>
@@ -762,7 +762,7 @@ AFRAME.registerComponent('narr-toggle', {
     var reg = AFRAME.components && AFRAME.components[compName];
     if(!reg || !reg.Component) return;
     var proto = reg.Component.prototype;
-    Object.keys(proto).forEach(function(k){
+    Object.getOwnPropertyNames(proto).forEach(function(k){
       if(k.indexOf('onButtonChanged') === 0 && typeof proto[k] === 'function'){
         var orig = proto[k];
         proto[k] = function(){
@@ -856,7 +856,7 @@ window.addEventListener('error', function(ev){
     var vrOk = res[1].status==='fulfilled' && res[1].value;
     window.__vrOk = !!vrOk; if(window.__tryEnable) window.__tryEnable();
     if(!vrOk){ status.textContent='Sem VR imersivo aqui — modo 3D pela tela.'; }
-    else { status.textContent='Dispositivo sem suporte a AR/VR imersivo. Explore a cena em 3D pela tela.'; }
+    else { status.textContent=''; }
   });
 })();
 </script>
