@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+<title>Plantec · Jornada 40 Anos</title>
+<script src="assets/aframe.min.js"></script>
+<style>
+  html,body{margin:0;background:#050510;font-family:'Montserrat',system-ui,sans-serif;}
+  #boot{position:fixed;inset:0;z-index:9999;background:radial-gradient(1200px 700px at 50% 30%, #1c1030 0%, #050510 70%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff;transition:opacity .6s;}
+  #boot img{width:min(60vw,360px);}
+  #boot h2{margin:0;font-weight:800;letter-spacing:2px;font-size:clamp(18px,4vw,30px);
+    background:linear-gradient(90deg,#A21585,#00A99D,#F5A800);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  #boot button{pointer-events:auto;font-family:inherit;font-weight:800;letter-spacing:.5px;cursor:pointer;
+    padding:14px 34px;border-radius:999px;border:0;font-size:16px;color:#fff;
+    background:linear-gradient(90deg,#A21585,#00A99D);box-shadow:0 8px 28px rgba(162,21,133,.4);}
+  #boot button[disabled]{opacity:.35;cursor:not-allowed;}
+  #hint{opacity:.6;font-size:12px;}
+</style>
+</head>
+<body>
+<div id="boot">
+  <img src="assets/logo.png" alt="Plantec">
+  <h2>JORNADA 40 ANOS</h2>
+  <button id="btn-vr" disabled>CARREGANDO&hellip;</button>
+  <p id="hint">Gatilho ou toque: avan&ccedil;ar esta&ccedil;&atilde;o &middot; A viagem &eacute; autom&aacute;tica</p>
+</div>
+
+<a-scene background="color: #050510" renderer="antialias: true; colorManagement: true; exposure: 1.05"
+  webxr="referenceSpaceType: local; requiredFeatures: local"
+  vr-mode-ui="enabled: false" loading-screen="enabled: false" ride-controller>
+
+  <a-assets timeout="30000">
+    <img id="logoimg" src="assets/logo.png" crossorigin="anonymous">
+    <img id="s05" src="assets/s-05.jpg" crossorigin="anonymous">
+    <img id="s06" src="assets/s-06.jpg" crossorigin="anonymous">
+    <img id="s07" src="assets/s-07.jpg" crossorigin="anonymous">
+    <img id="s08" src="assets/s-08.jpg" crossorigin="anonymous">
+  </a-assets>
+
+  <a-sky src="assets/sky_espaco.jpg" radius="480" rotation="0 40 0"></a-sky>
+
+  <!-- Rio do tempo -->
+  <a-plane rotation="-90 0 0" position="0 0.01 -75" width="1.1" height="170"
+     material="shader: flat; color: #00A99D; opacity: 0.22; transparent: true"></a-plane>
+  <a-plane rotation="-90 0 0" position="0 0.02 -75" width="0.08" height="170"
+     material="shader: flat; color: #00E5D0; opacity: 0.85; transparent: true"></a-plane>
+
+  <!-- Luzes -->
+  <a-entity light="type: ambient; color: #2a2440; intensity: 0.9"></a-entity>
+  <a-entity light="type: directional; color: #fff2dd; intensity: 0.9" position="-6 10 4"></a-entity>
+
+  <!-- ======= ESTACOES (geradas por ride-controller ao carregar) ======= -->
+  <a-entity id="stations"></a-entity>
+
+  <!-- Terra no destino -->
+  <a-sphere src="assets/earth_tex.jpg" radius="14" position="0 8 -152"
+     animation="property: rotation; to: 0 360 0; dur: 140000; loop: true; easing: linear"
+     material="roughness: 0.9"></a-sphere>
+
+  <!-- Rig -->
+  <a-entity id="rig" position="0 0 6">
+    <a-camera wasd-controls="enabled: false" look-controls="pointerLockEnabled: false" position="0 1.6 0">
+      <a-sphere id="fader" radius="0.4" material="shader: flat; color: #000; opacity: 0; side: back; transparent: true"></a-sphere>
+    </a-camera>
+    <a-entity laser-controls="hand: right" raycaster="objects: .clickable; far: 30; lineColor: #F5A800" skip-controller></a-entity>
+    <a-entity laser-controls="hand: left"  raycaster="objects: .clickable; far: 30; lineColor: #F5A800" skip-controller></a-entity>
+  </a-entity>
+</a-scene>
+
+<script>
+// ---------------- dados das estacoes ----------------
+var STATIONS = [
+  { z: -6,   ano: "40 ANOS", cor: "#F5A800", sub: "1986 - 2026 | A jornada da Plantec", img: null,  logo: true },
+  { z: -26,  ano: "1986", cor: "#A21585", sub: "Revenda e manutencao de PABX | O comeco de tudo", img: "#s05" },
+  { z: -46,  ano: "1992", cor: "#00A99D", sub: "A transformacao | Nasce a distribuidora de tecnologia", img: null },
+  { z: -66,  ano: "2010", cor: "#F5A800", sub: "Projeto PESI | Grande SP, interior e Santa Efigenia", img: "#s06" },
+  { z: -86,  ano: "2022", cor: "#A21585", sub: "Energia Solar Intelbras | Sala Smart e Sala Living", img: "#s07" },
+  { z: -106, ano: "2026", cor: "#00A99D", sub: "Loja digital | PlantecPay | +5.000 produtos | 9 unidades", img: "#s08" },
+  { z: -126, ano: "40", cor: "#F5A800", sub: "Plantec | 40 anos crescendo juntos", img: null, finale: true }
+];
+
+// ---------------- montagem das estacoes ----------------
+AFRAME.registerComponent('ride-controller', {
+  init: function () {
+    var root = document.getElementById('stations');
+    STATIONS.forEach(function (st, i) {
+      var g = document.createElement('a-entity');
+      g.setAttribute('id', 'st' + i);
+      g.setAttribute('position', '0 0 ' + st.z);
+
+      var ano = document.createElement('a-text');
+      ano.setAttribute('value', st.ano);
+      ano.setAttribute('align', 'center');
+      ano.setAttribute('color', st.cor);
+      ano.setAttribute('font', 'exo2semibold');
+      ano.setAttribute('width', st.finale ? 60 : 26);
+      ano.setAttribute('position', '0 ' + (st.finale ? 4.2 : 3.4) + ' 0');
+      g.appendChild(ano);
+
+      var sub = document.createElement('a-text');
+      sub.setAttribute('value', st.sub);
+      sub.setAttribute('align', 'center');
+      sub.setAttribute('color', '#eef4ff');
+      sub.setAttribute('font', 'kelsonsans');
+      sub.setAttribute('width', 7);
+      sub.setAttribute('wrap-count', 46);
+      sub.setAttribute('position', '0 2.15 0');
+      g.appendChild(sub);
+
+      if (st.img) {
+        var im = document.createElement('a-image');
+        im.setAttribute('src', st.img);
+        im.setAttribute('width', 3.0);
+        im.setAttribute('height', 1.6875);
+        im.setAttribute('position', '0 1.05 0.1');
+        g.appendChild(im);
+        var fr = document.createElement('a-plane');
+        fr.setAttribute('width', 3.12); fr.setAttribute('height', 1.8);
+        fr.setAttribute('position', '0 1.05 0.05');
+        fr.setAttribute('material', 'shader: flat; color: #120b1e; opacity: 0.9');
+        g.appendChild(fr);
+      }
+      if (st.logo || st.finale) {
+        var lg = document.createElement('a-image');
+        lg.setAttribute('src', '#logoimg');
+        lg.setAttribute('width', st.finale ? 3.4 : 2.4);
+        lg.setAttribute('height', st.finale ? 0.774 : 0.547);
+        lg.setAttribute('position', '0 ' + (st.finale ? 1.3 : 1.1) + ' 0');
+        lg.setAttribute('material', 'transparent: true; alphaTest: 0.05');
+        g.appendChild(lg);
+      }
+      // marcos laterais de luz
+      [-2.6, 2.6].forEach(function (x) {
+        var p = document.createElement('a-box');
+        p.setAttribute('position', x + ' 1.4 0');
+        p.setAttribute('width', '0.08'); p.setAttribute('height', '2.8'); p.setAttribute('depth', '0.08');
+        p.setAttribute('material', 'shader: flat; color: ' + st.cor + '; opacity: 0.8; transparent: true');
+        g.appendChild(p);
+      });
+      root.appendChild(g);
+    });
+    this.setupRide();
+  },
+
+  setupRide: function () {
+    var idx = 0, rig = document.getElementById('rig');
+    var player = new Audio(); var started = false; var moving = false;
+    var self = this;
+    function two(n){ return (n<10?'0':'')+n; }
+
+    function narr(i, cb) {
+      player.pause();
+      player.src = 'assets/narr40/j-' + two(i) + '.mp3';
+      player.onended = cb; player.onerror = cb;
+      var p = player.play(); if (p && p.catch) p.catch(cb);
+    }
+
+    function confetti() {
+      var sc = document.querySelector('a-scene');
+      var cols = ['#A21585', '#00A99D', '#F5A800', '#ffffff'];
+      for (var i = 0; i < 60; i++) {
+        (function (i) {
+          var e = document.createElement('a-plane');
+          var x = (Math.random() * 7 - 3.5).toFixed(2);
+          var z = (STATIONS[6].z - 2 + Math.random() * 4).toFixed(2);
+          var y0 = (4 + Math.random() * 2.5).toFixed(2);
+          e.setAttribute('width', '0.06'); e.setAttribute('height', '0.11');
+          e.setAttribute('position', x + ' ' + y0 + ' ' + z);
+          e.setAttribute('material', 'shader: flat; color: ' + cols[i % 4] + '; side: double');
+          e.setAttribute('animation__fall', 'property: position; to: ' + x + ' -0.2 ' + z + '; dur: ' + Math.round(2800 + Math.random() * 2600) + '; easing: easeInQuad');
+          e.setAttribute('animation__spin', 'property: rotation; to: ' + Math.round(Math.random() * 720 - 360) + ' ' + Math.round(Math.random() * 720) + ' 0; dur: 2900; loop: true; easing: linear');
+          sc.appendChild(e);
+          setTimeout(function () { if (e.parentNode) e.parentNode.removeChild(e); }, 6200);
+        })(i);
+      }
+    }
+
+    function sting() {
+      try {
+        var C = window.AudioContext || window.webkitAudioContext;
+        var ctx = self.__ctx = self.__ctx || new C();
+        if (ctx.state !== 'running') ctx.resume();
+        var t = ctx.currentTime;
+        [523.25, 659.25, 783.99, 1046.5].forEach(function (f, i) {
+          var o = ctx.createOscillator(), g = ctx.createGain();
+          o.type = 'triangle'; o.frequency.value = f;
+          g.gain.setValueAtTime(0.0001, t + i * 0.09);
+          g.gain.exponentialRampToValueAtTime(0.14, t + i * 0.09 + 0.04);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.09 + 1.0);
+          o.connect(g); g.connect(ctx.destination);
+          o.start(t + i * 0.09); o.stop(t + i * 0.09 + 1.1);
+        });
+      } catch (e) {}
+    }
+
+    function goTo(i, then) {
+      moving = true;
+      var target = STATIONS[i].z + 5.2;
+      rig.setAttribute('animation__ride', 'property: position; to: 0 0 ' + target + '; dur: 5200; easing: easeInOutQuad');
+      setTimeout(function () { moving = false; then && then(); }, 5300);
+    }
+
+    function stationArrived(i) {
+      if (STATIONS[i].finale) { sting(); confetti(); }
+      narr(i, function () {
+        if (i < STATIONS.length - 1) { setTimeout(function(){ advance(); }, 900); }
+      });
+    }
+
+    function advance() {
+      if (moving) return;
+      if (idx >= STATIONS.length - 1) { stationArrived(idx); return; }
+      idx++;
+      goTo(idx, function () { stationArrived(idx); });
+    }
+    this.skip = function () {
+      if (!started) return;
+      if (moving) return;
+      player.pause();
+      advance();
+    };
+
+    window.__startRide = function () {
+      if (started) return; started = true;
+      setTimeout(function () { stationArrived(0); }, 1200);
+    };
+  }
+});
+
+AFRAME.registerComponent('skip-controller', {
+  init: function () {
+    var sc = this.el.sceneEl;
+    this.el.addEventListener('triggerdown', function () {
+      var rc = sc.components['ride-controller'];
+      if (rc && rc.skip) rc.skip();
+    });
+  }
+});
+
+// toque na tela tambem avanca (celular/desktop)
+window.addEventListener('click', function (ev) {
+  if (ev.target && ev.target.tagName === 'BUTTON') return;
+  var sc = document.querySelector('a-scene');
+  var rc = sc && sc.components['ride-controller'];
+  if (rc && rc.skip) rc.skip();
+});
+
+// ---------------- boot ----------------
+(function () {
+  var btn = document.getElementById('btn-vr');
+  var boot = document.getElementById('boot');
+  var imgs = document.querySelectorAll('a-assets img');
+  var total = imgs.length || 1, done = 0;
+  imgs.forEach(function (im) {
+    if (im.complete) { done++; }
+    else { im.addEventListener('load', function () { done++; }); im.addEventListener('error', function () { done++; }); }
+  });
+  var iv = setInterval(function () {
+    if (done >= total) { clearInterval(iv); btn.disabled = false; btn.textContent = 'INICIAR A JORNADA'; }
+  }, 150);
+  setTimeout(function () { clearInterval(iv); btn.disabled = false; btn.textContent = 'INICIAR A JORNADA'; }, 15000);
+
+  btn.addEventListener('click', function () {
+    var sc = document.querySelector('a-scene');
+    function begin() {
+      boot.style.opacity = 0;
+      setTimeout(function () { boot.style.display = 'none'; }, 650);
+      if (window.__startRide) window.__startRide();
+    }
+    if (navigator.xr) {
+      navigator.xr.isSessionSupported('immersive-vr').then(function (ok) {
+        if (ok && sc.enterVR) { sc.enterVR().then(begin).catch(begin); } else { begin(); }
+      }).catch(begin);
+    } else { begin(); }
+  });
+})();
+</script>
+</body>
+</html>
