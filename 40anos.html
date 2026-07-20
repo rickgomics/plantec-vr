@@ -75,13 +75,18 @@
 <script>
 // ---------------- dados das estacoes ----------------
 var STATIONS = [
-  { z: -6,   ano: "40 ANOS", cor: "#F5A800", sub: "1986 - 2026 | A jornada da Plantec", img: null,  logo: true },
-  { z: -26,  ano: "1986", cor: "#A21585", sub: "Revenda e manutencao de PABX | O comeco de tudo", img: "#s05" },
-  { z: -46,  ano: "1992", cor: "#00A99D", sub: "A transformacao | Nasce a distribuidora de tecnologia", img: null },
-  { z: -66,  ano: "2010", cor: "#F5A800", sub: "Projeto PESI | Grande SP, interior e Santa Efigenia", img: "#s06" },
-  { z: -86,  ano: "2022", cor: "#A21585", sub: "Energia Solar Intelbras | Sala Smart e Sala Living", img: "#s07" },
-  { z: -106, ano: "2026", cor: "#00A99D", sub: "Loja digital | PlantecPay | +5.000 produtos | 9 unidades", img: "#s08" },
-  { z: -126, ano: "40", cor: "#F5A800", sub: "Plantec | 40 anos crescendo juntos", img: null, finale: true }
+  { z: -6,   ano: "40 ANOS", cor: "#F5A800", sub: "1986 - 2026 | A jornada da Plantec", img: null,  logo: true, mus: "era-intro" },
+  { z: -26,  ano: "1986", cor: "#A21585", sub: "Revenda e manutencao de PABX | O comeco de tudo", img: "#s05", mus: "era-1986",
+    news: ["Cometa Halley visita a Terra", "Plano Cruzado muda a moeda do Brasil", "Copa do Mexico paralisa o pais"] },
+  { z: -46,  ano: "1992", cor: "#00A99D", sub: "A transformacao | Nasce a distribuidora de tecnologia", img: null, mus: "era-1992",
+    news: ["ECO-92 reune o mundo no Rio", "Chega o Windows 3.1", "Primeiro SMS da historia e enviado"] },
+  { z: -66,  ano: "2010", cor: "#F5A800", sub: "Projeto PESI | Grande SP, interior e Santa Efigenia", img: "#s06", mus: "era-2010",
+    news: ["iPad inaugura a era dos tablets", "Copa da Africa do Sul", "3G se populariza no Brasil"] },
+  { z: -86,  ano: "2022", cor: "#A21585", sub: "Energia Solar Intelbras | Sala Smart e Sala Living", img: "#s07", mus: "era-2022",
+    news: ["5G chega ao Brasil", "IA generativa surpreende o mundo", "Copa do Catar"] },
+  { z: -106, ano: "2026", cor: "#00A99D", sub: "Loja digital | PlantecPay | +5.000 produtos | 9 unidades", img: "#s08", mus: "era-2022",
+    news: ["Voce esta aqui", "A Plantec digital em plena expansao"] },
+  { z: -126, ano: "40", cor: "#F5A800", sub: "Plantec | 40 anos crescendo juntos", img: null, finale: true, mus: "era-intro" }
 ];
 
 // ---------------- montagem das estacoes ----------------
@@ -134,6 +139,36 @@ AFRAME.registerComponent('ride-controller', {
         lg.setAttribute('material', 'transparent: true; alphaTest: 0.05');
         g.appendChild(lg);
       }
+      if (st.news) {
+        st.news.forEach(function (tx, k) {
+          var side = (k % 2 === 0) ? -1 : 1;
+          var card = document.createElement('a-entity');
+          card.setAttribute('position', (side * 3.0) + ' ' + (2.5 - Math.floor(k/2) * 0.75) + ' 0.3');
+          card.setAttribute('rotation', '0 ' + (side * -22) + ' 0');
+          card.setAttribute('animation', 'property: position; from: ' + (side*3.0) + ' ' + (2.5 - Math.floor(k/2)*0.75) + ' 0.3; to: ' + (side*3.0) + ' ' + (2.56 - Math.floor(k/2)*0.75) + ' 0.3; dir: alternate; dur: ' + (2200 + k*400) + '; loop: true; easing: easeInOutSine');
+          var bg = document.createElement('a-plane');
+          bg.setAttribute('width', 2.1); bg.setAttribute('height', 0.5);
+          bg.setAttribute('material', 'shader: flat; color: #120b1e; opacity: 0.92');
+          card.appendChild(bg);
+          var tag = document.createElement('a-plane');
+          tag.setAttribute('width', 0.5); tag.setAttribute('height', 0.13);
+          tag.setAttribute('position', '-0.75 0.185 0.01');
+          tag.setAttribute('material', 'shader: flat; color: ' + st.cor);
+          card.appendChild(tag);
+          var tagt = document.createElement('a-text');
+          tagt.setAttribute('value', st.ano); tagt.setAttribute('align', 'center');
+          tagt.setAttribute('color', '#fff'); tagt.setAttribute('font', 'exo2semibold');
+          tagt.setAttribute('width', 1.6); tagt.setAttribute('position', '-0.75 0.185 0.02');
+          card.appendChild(tagt);
+          var txt = document.createElement('a-text');
+          txt.setAttribute('value', tx); txt.setAttribute('align', 'center');
+          txt.setAttribute('color', '#eef4ff'); txt.setAttribute('font', 'kelsonsans');
+          txt.setAttribute('width', 2.6); txt.setAttribute('wrap-count', 30);
+          txt.setAttribute('position', '0 -0.05 0.01');
+          card.appendChild(txt);
+          g.appendChild(card);
+        });
+      }
       // marcos laterais de luz
       [-2.6, 2.6].forEach(function (x) {
         var p = document.createElement('a-box');
@@ -150,13 +185,36 @@ AFRAME.registerComponent('ride-controller', {
   setupRide: function () {
     var idx = 0, rig = document.getElementById('rig');
     var player = new Audio(); var started = false; var moving = false;
+    var musicP = new Audio(); musicP.loop = true; musicP.volume = 0;
+    var fadeIv = null;
+    function playEra(name) {
+      var src = 'assets/eras/' + name + '.mp3';
+      if (musicP.src.indexOf(src) !== -1 && !musicP.paused) return;
+      clearInterval(fadeIv);
+      var sw = function(){
+        musicP.src = src; musicP.volume = 0;
+        var p = musicP.play(); if (p && p.catch) p.catch(function(){});
+        fadeIv = setInterval(function(){
+          musicP.volume = Math.min(0.5, musicP.volume + 0.05);
+          if (musicP.volume >= 0.5) clearInterval(fadeIv);
+        }, 90);
+      };
+      if (!musicP.paused && musicP.src) {
+        var out = setInterval(function(){
+          musicP.volume = Math.max(0, musicP.volume - 0.08);
+          if (musicP.volume <= 0) { clearInterval(out); sw(); }
+        }, 70);
+      } else { sw(); }
+    }
     var self = this;
     function two(n){ return (n<10?'0':'')+n; }
 
     function narr(i, cb) {
       player.pause();
+      if (musicP && !musicP.paused) musicP.volume = 0.18;
       player.src = 'assets/narr40/j-' + two(i) + '.mp3';
-      player.onended = cb; player.onerror = cb;
+      player.onended = function(){ if (musicP && !musicP.paused) musicP.volume = 0.5; cb(); };
+      player.onerror = function(){ if (musicP && !musicP.paused) musicP.volume = 0.5; cb(); };
       var p = player.play(); if (p && p.catch) p.catch(cb);
     }
 
@@ -206,6 +264,7 @@ AFRAME.registerComponent('ride-controller', {
     }
 
     function stationArrived(i) {
+      if (STATIONS[i].mus) playEra(STATIONS[i].mus);
       if (STATIONS[i].finale) { sting(); confetti(); }
       narr(i, function () {
         if (i < STATIONS.length - 1) { setTimeout(function(){ advance(); }, 900); }
