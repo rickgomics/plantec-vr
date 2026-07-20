@@ -40,6 +40,11 @@
     <img id="s06" src="assets/s-06.jpg" crossorigin="anonymous">
     <img id="s07" src="assets/s-07.jpg" crossorigin="anonymous">
     <img id="s08" src="assets/s-08.jpg" crossorigin="anonymous">
+    <img id="np1986" src="assets/news/paper-1986.jpg" crossorigin="anonymous">
+    <img id="np1992" src="assets/news/paper-1992.jpg" crossorigin="anonymous">
+    <img id="np2010" src="assets/news/paper-2010.jpg" crossorigin="anonymous">
+    <img id="np2022" src="assets/news/paper-2022.jpg" crossorigin="anonymous">
+    <img id="np2026" src="assets/news/paper-2026.jpg" crossorigin="anonymous">
   </a-assets>
 
   <a-sky src="assets/sky_espaco.jpg" radius="480" rotation="0 40 0"></a-sky>
@@ -139,36 +144,6 @@ AFRAME.registerComponent('ride-controller', {
         lg.setAttribute('material', 'transparent: true; alphaTest: 0.05');
         g.appendChild(lg);
       }
-      if (st.news) {
-        st.news.forEach(function (tx, k) {
-          var side = (k % 2 === 0) ? -1 : 1;
-          var card = document.createElement('a-entity');
-          card.setAttribute('position', (side * 3.0) + ' ' + (2.5 - Math.floor(k/2) * 0.75) + ' 0.3');
-          card.setAttribute('rotation', '0 ' + (side * -22) + ' 0');
-          card.setAttribute('animation', 'property: position; from: ' + (side*3.0) + ' ' + (2.5 - Math.floor(k/2)*0.75) + ' 0.3; to: ' + (side*3.0) + ' ' + (2.56 - Math.floor(k/2)*0.75) + ' 0.3; dir: alternate; dur: ' + (2200 + k*400) + '; loop: true; easing: easeInOutSine');
-          var bg = document.createElement('a-plane');
-          bg.setAttribute('width', 2.1); bg.setAttribute('height', 0.5);
-          bg.setAttribute('material', 'shader: flat; color: #120b1e; opacity: 0.92');
-          card.appendChild(bg);
-          var tag = document.createElement('a-plane');
-          tag.setAttribute('width', 0.5); tag.setAttribute('height', 0.13);
-          tag.setAttribute('position', '-0.75 0.185 0.01');
-          tag.setAttribute('material', 'shader: flat; color: ' + st.cor);
-          card.appendChild(tag);
-          var tagt = document.createElement('a-text');
-          tagt.setAttribute('value', st.ano); tagt.setAttribute('align', 'center');
-          tagt.setAttribute('color', '#fff'); tagt.setAttribute('font', 'exo2semibold');
-          tagt.setAttribute('width', 1.6); tagt.setAttribute('position', '-0.75 0.185 0.02');
-          card.appendChild(tagt);
-          var txt = document.createElement('a-text');
-          txt.setAttribute('value', tx); txt.setAttribute('align', 'center');
-          txt.setAttribute('color', '#eef4ff'); txt.setAttribute('font', 'kelsonsans');
-          txt.setAttribute('width', 2.6); txt.setAttribute('wrap-count', 30);
-          txt.setAttribute('position', '0 -0.05 0.01');
-          card.appendChild(txt);
-          g.appendChild(card);
-        });
-      }
       // marcos laterais de luz
       [-2.6, 2.6].forEach(function (x) {
         var p = document.createElement('a-box');
@@ -179,7 +154,61 @@ AFRAME.registerComponent('ride-controller', {
       });
       root.appendChild(g);
     });
+    this.buildAmbient(root);
     this.setupRide();
+  },
+
+
+  buildAmbient: function (root) {
+    var cols = ['#A21585', '#00A99D', '#F5A800', '#00E5D0', '#E0389F'];
+    // ---- corredor de notas musicais ----
+    for (var i = 0; i < 40; i++) {
+      var side = (i % 2 === 0) ? -1 : 1;
+      var z = -3 - i * 3.2;
+      var x = side * (2.6 + Math.random() * 0.7);
+      var y = 0.8 + Math.random() * 2.6;
+      var c = cols[i % cols.length];
+      var g = document.createElement('a-entity');
+      g.setAttribute('position', x.toFixed(2) + ' ' + y.toFixed(2) + ' ' + z.toFixed(2));
+      g.setAttribute('rotation', '0 ' + (side * -20) + ' 0');
+      g.setAttribute('animation__f', 'property: position; from: ' + x.toFixed(2) + ' ' + y.toFixed(2) + ' ' + z.toFixed(2) + '; to: ' + x.toFixed(2) + ' ' + (y + 0.3).toFixed(2) + ' ' + z.toFixed(2) + '; dir: alternate; dur: ' + Math.round(1900 + Math.random() * 1800) + '; loop: true; easing: easeInOutSine');
+      g.setAttribute('animation__r', 'property: rotation; from: 0 ' + (side * -20) + ' -9; to: 0 ' + (side * -20) + ' 9; dir: alternate; dur: ' + Math.round(2400 + Math.random() * 1500) + '; loop: true; easing: easeInOutSine');
+      var head = document.createElement('a-sphere');
+      head.setAttribute('radius', '0.075');
+      head.setAttribute('scale', '1 0.8 1');
+      head.setAttribute('material', 'shader: flat; color: ' + c);
+      g.appendChild(head);
+      var stem = document.createElement('a-box');
+      stem.setAttribute('position', '0.068 0.19 0');
+      stem.setAttribute('width', '0.024'); stem.setAttribute('height', '0.36'); stem.setAttribute('depth', '0.024');
+      stem.setAttribute('material', 'shader: flat; color: ' + c);
+      g.appendChild(stem);
+      var flag = document.createElement('a-box');
+      flag.setAttribute('position', '0.14 0.33 0');
+      flag.setAttribute('rotation', '0 0 -34');
+      flag.setAttribute('width', '0.16'); flag.setAttribute('height', '0.05'); flag.setAttribute('depth', '0.024');
+      flag.setAttribute('material', 'shader: flat; color: ' + c);
+      g.appendChild(flag);
+      root.appendChild(g);
+    }
+    // ---- jornais de epoca voando ----
+    var papers = { 1: '#np1986', 2: '#np1992', 3: '#np2010', 4: '#np2022', 5: '#np2026' };
+    Object.keys(papers).forEach(function (si) {
+      var st = STATIONS[+si];
+      for (var k = 0; k < 2; k++) {
+        var p = document.createElement('a-image');
+        p.setAttribute('src', papers[si]);
+        p.setAttribute('width', '1.05'); p.setAttribute('height', '1.31');
+        var sx = (k === 0 ? -3.2 : 3.2), ex = -sx;
+        var sy = 1.2 + Math.random() * 1.4, ey = 1.0 + Math.random() * 2.0;
+        var sz = st.z - 7, ez = st.z + 13;
+        p.setAttribute('position', sx + ' ' + sy.toFixed(2) + ' ' + sz);
+        p.setAttribute('material', 'side: double; transparent: true');
+        p.setAttribute('animation__fly', 'property: position; from: ' + sx + ' ' + sy.toFixed(2) + ' ' + sz + '; to: ' + ex + ' ' + ey.toFixed(2) + ' ' + ez + '; dur: ' + Math.round(6800 + Math.random() * 2000) + '; loop: true; easing: linear; delay: ' + (k * 3400));
+        p.setAttribute('animation__spin', 'property: rotation; from: 0 0 0; to: 20 720 360; dur: ' + Math.round(6800 + Math.random() * 2000) + '; loop: true; easing: linear; delay: ' + (k * 3400));
+        root.appendChild(p);
+      }
+    });
   },
 
   setupRide: function () {
