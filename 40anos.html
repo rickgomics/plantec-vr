@@ -28,6 +28,7 @@
   <h2>JORNADA 40 ANOS</h2>
   <button id="btn-vr" disabled>CARREGANDO&hellip;</button>
   <p id="hint">Gatilho ou toque: avan&ccedil;ar esta&ccedil;&atilde;o &middot; A viagem &eacute; autom&aacute;tica</p>
+  <p id="hint" style="opacity:.4">Trilha: "Legionnaire" &mdash; Scott Buckley (CC-BY 4.0)</p>
 </div>
 
 <a-scene background="color: #050510" renderer="antialias: true; colorManagement: true; exposure: 1.05"
@@ -174,8 +175,7 @@ window.SCORE=(function(){
       filt.connect(dry); dry.connect(duckG);
       filt.connect(rev); rev.connect(wet); wet.connect(duckG);
       duckG.connect(master); master.connect(ctx.destination);
-      master.gain.linearRampToValueAtTime(0.55, ctx.currentTime+3.5);
-      loop();
+      master.gain.value = 0.9;  // bus de efeitos
     },
     setEra:function(i){
       era=Math.min(i,ERAS.length-1);
@@ -352,15 +352,24 @@ AFRAME.registerComponent('ride-controller', {
   setupRide: function () {
     var idx = 0, rig = document.getElementById('rig');
     var player = new Audio(); var started = false; var moving = false;
+    var music = new Audio('assets/musica-jornada.mp3');
+    music.loop = true; music.volume = 0;
+    function musicTo(v, ms){
+      var steps = 20, k = 0, from = music.volume;
+      var iv = setInterval(function(){
+        k++; music.volume = Math.max(0, Math.min(1, from + (v - from) * k / steps));
+        if (k >= steps) clearInterval(iv);
+      }, (ms||800)/20);
+    }
     var self = this;
     function two(n){ return (n<10?'0':'')+n; }
 
     function narr(i, cb) {
       player.pause();
-      if (window.SCORE) SCORE.duck(true);
+      musicTo(0.14, 500);
       player.src = 'assets/narr40/j-' + two(i) + '.mp3';
-      player.onended = function(){ if (window.SCORE) SCORE.duck(false); cb(); };
-      player.onerror = function(){ if (window.SCORE) SCORE.duck(false); cb(); };
+      player.onended = function(){ musicTo(0.5, 900); cb(); };
+      player.onerror = function(){ musicTo(0.5, 900); cb(); };
       var p = player.play(); if (p && p.catch) p.catch(cb);
     }
 
@@ -412,7 +421,7 @@ AFRAME.registerComponent('ride-controller', {
 
     function stationArrived(i) {
       if (window.SCORE) SCORE.setEra(i);
-      if (STATIONS[i].finale) { sting(); confetti(); }
+      if (STATIONS[i].finale) { sting(); confetti(); musicTo(0.72, 1200); }
       narr(i, function () {
         if (i < STATIONS.length - 1) { setTimeout(function(){ advance(); }, 900); }
       });
@@ -477,6 +486,8 @@ window.addEventListener('click', function (ev) {
       boot.style.opacity = 0;
       setTimeout(function () { boot.style.display = 'none'; }, 650);
       if (window.SCORE) SCORE.start();
+      var mp = music.play(); if (mp && mp.catch) mp.catch(function(){});
+      musicTo(0.5, 2500);
       if (window.__startRide) window.__startRide();
     }
     if (navigator.xr) {
