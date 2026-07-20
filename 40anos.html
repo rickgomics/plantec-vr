@@ -94,6 +94,112 @@ var STATIONS = [
   { z: -126, ano: "40", cor: "#F5A800", sub: "Plantec | 40 anos crescendo juntos", img: null, finale: true, mus: "era-intro" }
 ];
 
+
+// ================= TRILHA CINEMATOGRAFICA AO VIVO =================
+window.SCORE=(function(){
+  var ctx,master,duckG,filt,rev,wet,dry,started=false,era=0,step=0,timer=null;
+  var ERAS=[
+    {rootHz:110,  bright:850,  tempo:2.4, minor:true},              // 40 ANOS (abertura)
+    {rootHz:110,  bright:950,  tempo:2.0, minor:true,  sfx:'phone'},// 1986
+    {rootHz:87.31,bright:1350, tempo:1.7, minor:true,  sfx:'modem'},// 1992
+    {rootHz:130.8,bright:1900, tempo:1.4, minor:false, sfx:'ping'}, // 2010
+    {rootHz:110,  bright:2400, tempo:1.2, minor:false, sfx:'glass'},// 2022
+    {rootHz:110,  bright:2600, tempo:1.1, minor:false, sfx:'glass'},// 2026
+    {rootHz:130.8,bright:3100, tempo:1.0, minor:false}              // FINALE
+  ];
+  var PROG=[0,-4,3,-2];
+  function impulse(){
+    var len=Math.floor(ctx.sampleRate*2.6), b=ctx.createBuffer(2,len,ctx.sampleRate);
+    for(var c=0;c<2;c++){var d=b.getChannelData(c);
+      for(var i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6);}
+    return b;
+  }
+  function note(f,t,dur,vol,type){
+    var o=ctx.createOscillator(),g=ctx.createGain();
+    o.type=type||'sawtooth'; o.frequency.value=f;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.linearRampToValueAtTime(vol,t+Math.min(1.4,dur*0.4));
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(filt);
+    o.start(t); o.stop(t+dur+0.1);
+  }
+  function tones(){ var e=ERAS[era]||ERAS[0]; return e.minor?[0,3,7,14]:[0,4,7,14]; }
+  function loop(){
+    if(!ctx) return;
+    var e=ERAS[era]||ERAS[0], t=ctx.currentTime+0.05;
+    var root=(e.rootHz||110)*Math.pow(2,PROG[step%4]/12); step++;
+    tones().forEach(function(st,i){
+      var f=root*Math.pow(2,st/12);
+      note(f,t,7.6,i?0.038:0.05,'sawtooth');
+      note(f*1.006,t,7.6,0.028,'sawtooth');   // detune = largura
+    });
+    note(root/2,t,7.6,0.15,'sine');            // sub
+    var beats=Math.max(3,Math.round(6/(e.tempo||1.5)));
+    for(var k=0;k<beats;k++){
+      var tn=tones()[k%4];
+      note(root*Math.pow(2,(tn+12)/12), t+0.4+k*(5.4/beats), 0.5, 0.04, 'triangle');
+    }
+    timer=setTimeout(loop,6000);
+  }
+  var SFX={
+    phone:function(){ var t=ctx.currentTime+0.7;
+      [0,1.9].forEach(function(off){
+        for(var k=0;k<18;k++){ note(440,t+off+k*0.05,0.035,0.10,'sine'); note(480,t+off+k*0.05,0.035,0.10,'sine'); }
+      });},
+    modem:function(){ var t=ctx.currentTime+0.7;
+      for(var k=0;k<9;k++) note(500+Math.random()*1600, t+k*0.11, 0.09, 0.07, 'square');
+      note(1250,t+1.1,0.6,0.05,'square'); note(2100,t+1.15,0.55,0.035,'square');},
+    ping:function(){ var t=ctx.currentTime+0.8;
+      [880,1174.7,1568].forEach(function(f,i){ note(f,t+i*0.14,0.25,0.09,'sine'); });},
+    glass:function(){ var t=ctx.currentTime+0.8;
+      var o=ctx.createOscillator(),g=ctx.createGain();
+      o.type='sine'; o.frequency.setValueAtTime(1600,t);
+      o.frequency.exponentialRampToValueAtTime(3400,t+0.7);
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.06,t+0.1);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.9);
+      o.connect(g); g.connect(filt); o.start(t); o.stop(t+1);
+      [2093,2637,3136].forEach(function(f,i){ note(f,t+0.15+i*0.12,0.3,0.04,'triangle'); });}
+  };
+  return {
+    start:function(){
+      if(started) return; started=true;
+      var C=window.AudioContext||window.webkitAudioContext; ctx=new C();
+      if(ctx.state!=='running') ctx.resume();
+      master=ctx.createGain(); master.gain.value=0;
+      duckG=ctx.createGain(); duckG.gain.value=1;
+      filt=ctx.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=850; filt.Q.value=0.7;
+      rev=ctx.createConvolver(); rev.buffer=impulse();
+      wet=ctx.createGain(); wet.gain.value=0.55;
+      dry=ctx.createGain(); dry.gain.value=0.65;
+      filt.connect(dry); dry.connect(duckG);
+      filt.connect(rev); rev.connect(wet); wet.connect(duckG);
+      duckG.connect(master); master.connect(ctx.destination);
+      master.gain.linearRampToValueAtTime(0.55, ctx.currentTime+3.5);
+      loop();
+    },
+    setEra:function(i){
+      era=Math.min(i,ERAS.length-1);
+      if(!ctx) return;
+      var e=ERAS[era];
+      filt.frequency.linearRampToValueAtTime(e.bright||1200, ctx.currentTime+2.8);
+      if(e.sfx && SFX[e.sfx]) SFX[e.sfx]();
+    },
+    duck:function(on){ if(duckG&&ctx) duckG.gain.linearRampToValueAtTime(on?0.26:1, ctx.currentTime+0.4); },
+    whoosh:function(){
+      if(!ctx) return; var t=ctx.currentTime;
+      var b=ctx.createBuffer(1,Math.floor(ctx.sampleRate*1.5),ctx.sampleRate),d=b.getChannelData(0);
+      for(var i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(Math.sin(Math.PI*i/d.length),2);
+      var s=ctx.createBufferSource(); s.buffer=b;
+      var f=ctx.createBiquadFilter(); f.type='bandpass'; f.Q.value=1.1;
+      f.frequency.setValueAtTime(280,t);
+      f.frequency.exponentialRampToValueAtTime(2600,t+1.3);
+      var g=ctx.createGain(); g.gain.value=0.5;
+      s.connect(f); f.connect(g); g.connect(duckG);
+      s.start(t);
+    }
+  };
+})();
+
 // ---------------- montagem das estacoes ----------------
 AFRAME.registerComponent('ride-controller', {
   init: function () {
@@ -103,6 +209,38 @@ AFRAME.registerComponent('ride-controller', {
       g.setAttribute('id', 'st' + i);
       g.setAttribute('position', '0 0 ' + st.z);
 
+      // glow de fundo do ano
+      var glow = document.createElement('a-plane');
+      glow.setAttribute('width', st.finale ? 7.5 : 5.5);
+      glow.setAttribute('height', 1.8);
+      glow.setAttribute('position', '0 ' + (st.finale ? 4.2 : 3.4) + ' -0.15');
+      glow.setAttribute('material', 'shader: flat; color: ' + st.cor + '; opacity: 0.10; transparent: true');
+      g.appendChild(glow);
+      // camada de profundidade (extrusao falsa)
+      var anoBg = document.createElement('a-text');
+      anoBg.setAttribute('value', st.ano);
+      anoBg.setAttribute('align', 'center');
+      anoBg.setAttribute('color', '#0a0616');
+      anoBg.setAttribute('font', 'exo2semibold');
+      anoBg.setAttribute('width', st.finale ? 60 : 26);
+      anoBg.setAttribute('position', '0.07 ' + ((st.finale ? 4.2 : 3.4) - 0.06) + ' -0.08');
+      g.appendChild(anoBg);
+      // portal luminoso que voce atravessa
+      var arc = document.createElement('a-torus');
+      arc.setAttribute('radius', 2.7); arc.setAttribute('radius-tubular', 0.05);
+      arc.setAttribute('theta-start', 0); arc.setAttribute('theta-length', 180);
+      arc.setAttribute('segments-tubular', 40);
+      arc.setAttribute('position', '0 0.1 2.4');
+      arc.setAttribute('material', 'shader: flat; color: ' + st.cor + '; opacity: 0.75; transparent: true');
+      arc.setAttribute('animation', 'property: material.opacity; from: 0.45; to: 0.9; dir: alternate; dur: 1600; loop: true; easing: easeInOutSine');
+      g.appendChild(arc);
+      var arc2 = document.createElement('a-torus');
+      arc2.setAttribute('radius', 2.55); arc2.setAttribute('radius-tubular', 0.015);
+      arc2.setAttribute('theta-start', 0); arc2.setAttribute('theta-length', 180);
+      arc2.setAttribute('segments-tubular', 40);
+      arc2.setAttribute('position', '0 0.1 2.4');
+      arc2.setAttribute('material', 'shader: flat; color: #ffffff; opacity: 0.5; transparent: true');
+      g.appendChild(arc2);
       var ano = document.createElement('a-text');
       ano.setAttribute('value', st.ano);
       ano.setAttribute('align', 'center');
@@ -214,36 +352,15 @@ AFRAME.registerComponent('ride-controller', {
   setupRide: function () {
     var idx = 0, rig = document.getElementById('rig');
     var player = new Audio(); var started = false; var moving = false;
-    var musicP = new Audio(); musicP.loop = true; musicP.volume = 0;
-    var fadeIv = null;
-    function playEra(name) {
-      var src = 'assets/eras/' + name + '.mp3';
-      if (musicP.src.indexOf(src) !== -1 && !musicP.paused) return;
-      clearInterval(fadeIv);
-      var sw = function(){
-        musicP.src = src; musicP.volume = 0;
-        var p = musicP.play(); if (p && p.catch) p.catch(function(){});
-        fadeIv = setInterval(function(){
-          musicP.volume = Math.min(0.5, musicP.volume + 0.05);
-          if (musicP.volume >= 0.5) clearInterval(fadeIv);
-        }, 90);
-      };
-      if (!musicP.paused && musicP.src) {
-        var out = setInterval(function(){
-          musicP.volume = Math.max(0, musicP.volume - 0.08);
-          if (musicP.volume <= 0) { clearInterval(out); sw(); }
-        }, 70);
-      } else { sw(); }
-    }
     var self = this;
     function two(n){ return (n<10?'0':'')+n; }
 
     function narr(i, cb) {
       player.pause();
-      if (musicP && !musicP.paused) musicP.volume = 0.18;
+      if (window.SCORE) SCORE.duck(true);
       player.src = 'assets/narr40/j-' + two(i) + '.mp3';
-      player.onended = function(){ if (musicP && !musicP.paused) musicP.volume = 0.5; cb(); };
-      player.onerror = function(){ if (musicP && !musicP.paused) musicP.volume = 0.5; cb(); };
+      player.onended = function(){ if (window.SCORE) SCORE.duck(false); cb(); };
+      player.onerror = function(){ if (window.SCORE) SCORE.duck(false); cb(); };
       var p = player.play(); if (p && p.catch) p.catch(cb);
     }
 
@@ -287,13 +404,14 @@ AFRAME.registerComponent('ride-controller', {
 
     function goTo(i, then) {
       moving = true;
+      if (window.SCORE) SCORE.whoosh();
       var target = STATIONS[i].z + 5.2;
       rig.setAttribute('animation__ride', 'property: position; to: 0 0 ' + target + '; dur: 5200; easing: easeInOutQuad');
       setTimeout(function () { moving = false; then && then(); }, 5300);
     }
 
     function stationArrived(i) {
-      if (STATIONS[i].mus) playEra(STATIONS[i].mus);
+      if (window.SCORE) SCORE.setEra(i);
       if (STATIONS[i].finale) { sting(); confetti(); }
       narr(i, function () {
         if (i < STATIONS.length - 1) { setTimeout(function(){ advance(); }, 900); }
@@ -358,6 +476,7 @@ window.addEventListener('click', function (ev) {
     function begin() {
       boot.style.opacity = 0;
       setTimeout(function () { boot.style.display = 'none'; }, 650);
+      if (window.SCORE) SCORE.start();
       if (window.__startRide) window.__startRide();
     }
     if (navigator.xr) {
