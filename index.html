@@ -7,6 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a0812">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
 <title>Plantec · Institucional 2026 — Experiência VR</title>
 <style>
   html,body{margin:0;height:100%;background:#0a0812;overflow:hidden;font-family:'Montserrat',system-ui,sans-serif;}
@@ -21,6 +25,8 @@
   #landlogo{pointer-events:none;width:min(66vw,400px);filter:drop-shadow(0 6px 24px rgba(0,0,0,.5));}
   #landtitle{pointer-events:none;color:#fff;font-weight:700;font-size:15px;letter-spacing:.4px;opacity:.9;margin:2px 0 6px;}
   #btn-vr:active{transform:scale(.97);}
+  #btn-ar{background:transparent;color:#F5A800;border:1.5px solid rgba(245,168,0,.55);box-shadow:none;}
+  #btn-ar:active{transform:scale(.97);}
   #xrstatus{pointer-events:none;color:#e8d5f0;font-size:12px;opacity:.85;max-width:280px;text-align:center;line-height:1.5;
        background:rgba(3,20,16,.5);padding:8px 12px;border-radius:10px;}
   #boot button[disabled]{opacity:.35;cursor:not-allowed;}
@@ -46,9 +52,10 @@
   <img id="landlogo" src="assets/logo.png" alt="Plantec">
   <div id="bar"><i></i></div>
   <button id="btn-vr" disabled>CARREGANDO…</button>
+  <button id="btn-ar" style="display:none">VER NA MINHA SALA</button>
   <a id="sitelink" href="https://institucional.plantec.com" target="_blank" rel="noopener">institucional.plantec.com</a>
   <div id="xrstatus"></div>
-  <p id="vstamp">v46</p>
+  <p id="vstamp">v47</p>
 </div>
 
 </div>
@@ -58,9 +65,9 @@
   <button onclick="window.DECK&&window.DECK.next()">›</button>
 </div>
 
-<a-scene deck ar-toggle height-fix
+<a-scene deck ar-toggle height-fix input-mode
   background="color: #050d13"
-  renderer="antialias: true; colorManagement: true; exposure: 1.05"
+  renderer="antialias: true; colorManagement: true; exposure: 1.05; alpha: true"
   webxr="referenceSpaceType: local; requiredFeatures: local; optionalFeatures: hand-tracking"
   vr-mode-ui="enabled: false"
   loading-screen="enabled: false">
@@ -324,7 +331,7 @@
   </a-entity>
 
   <!-- Menu de cenarios -->
-  <a-entity id="thememenu" position="-3.3 2.0 -2.7" rotation="0 38 0">
+  <a-entity id="thememenu" position="-2.68 1.98 -2.86" rotation="0 30 0">
     <a-entity text="value: CENARIO; align: center; color: #F5A800; width: 3.2; font: exo2semibold" position="0 0.55 0"></a-entity>
     <a-entity class="clickable tpill" theme-pick="name: auditorio" position="0 0.22 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Auditorio Plantec; align: center; color: #eafff4; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
     <a-entity class="clickable tpill" theme-pick="name: aeroporto" position="0 -0.14 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #221033; opacity: 0.92"><a-entity text="value: Aeroporto (real); align: center; color: #eafff4; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
@@ -333,7 +340,7 @@
   </a-entity>
 
   <!-- Painel de som (direita, espelhando o menu) -->
-  <a-entity id="soundpanel" position="3.3 2.0 -2.7" rotation="0 -38 0">
+  <a-entity id="soundpanel" position="2.68 1.98 -2.86" rotation="0 -30 0">
     <a-entity text="value: SOM; align: center; color: #F5A800; width: 3.2; font: exo2semibold" position="0 0.55 0"></a-entity>
     <a-entity id="mutepill" class="clickable" narr-toggle position="0 0.22 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="mutelabel" text="value: NARRACAO: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
     <a-entity id="ambpill" class="clickable" amb-toggle position="0 -0.14 0" geometry="primitive: plane; width: 1.7; height: 0.3" material="shader: flat; color: #00A99D; opacity: 0.92"><a-entity id="amblabel" text="value: AMBIENTE: ON; align: center; color: #ffffff; width: 2.9; font: kelsonsans" position="0 0 0.01"></a-entity></a-entity>
@@ -358,12 +365,26 @@
   <!-- Camera rig + controllers -->
   <a-entity id="rig" position="0 0 0">
     <a-camera wasd-controls="enabled: false" look-controls="pointerLockEnabled: false" position="0 1.6 0">
+      <a-entity id="gazecursor" visible="false" position="0 0 -1.2"
+        cursor="fuse: true; fuseTimeout: 1100; rayOrigin: entity"
+        raycaster="objects: .clickable; far: 30; enabled: false"
+        geometry="primitive: ring; radiusInner: 0.013; radiusOuter: 0.019; segmentsTheta: 32"
+        material="color: #F5A800; shader: flat; opacity: 0.9; transparent: true"
+        animation__fuse="property: scale; startEvents: fusing; from: 1 1 1; to: 2 2 2; dur: 1100; easing: linear"
+        animation__leave="property: scale; startEvents: mouseleave; to: 1 1 1; dur: 160"
+        animation__click="property: scale; startEvents: click; to: 1 1 1; dur: 160"></a-entity>
       <a-sphere id="fader" radius="0.4" material="shader: flat; color: #000; opacity: 0; side: back; transparent: true" position="0 0 0"></a-sphere>
       <a-entity cursor="fuse: false; rayOrigin: mouse"
                 raycaster="objects: .clickable; far: 30"></a-entity>
     </a-camera>
     <a-entity nav-controller laser-controls="hand: right" raycaster="objects: .clickable; far: 30; lineColor: #F5A800"></a-entity>
     <a-entity nav-controller laser-controls="hand: left"  raycaster="objects: .clickable; far: 30; lineColor: #F5A800"></a-entity>
+    <a-entity id="handR" nav-controller hand-tracking-controls="hand: right; modelColor: #F5A800"
+      raycaster="objects: .clickable; far: 30; lineColor: #F5A800; showLine: true"
+      line="color: #F5A800; opacity: 0.6"></a-entity>
+    <a-entity id="handL" nav-controller hand-tracking-controls="hand: left; modelColor: #00A99D"
+      raycaster="objects: .clickable; far: 30; lineColor: #00A99D; showLine: true"
+      line="color: #00A99D; opacity: 0.6"></a-entity>
   </a-entity>
 
 </a-scene>
@@ -469,11 +490,16 @@ AFRAME.registerComponent('nav-controller', {
       }
       return true; // laser sobre algo clicavel: nao troca slide
     }
-    el.addEventListener('triggerdown', function(){
+    function act(){
+      var now = performance.now();
+      if(window.__lastAct && now - window.__lastAct < 320) return;
+      window.__lastAct = now;
       if(window.AUDIO){window.AUDIO.start();window.AUDIO.resume();}
       if(uiAction()) return;
       if(window.DECK) window.DECK.next();
-    });
+    }
+    el.addEventListener('triggerdown', act);
+    el.addEventListener('pinchstarted', act);
     el.addEventListener('gripdown',    function(){ if(window.DECK) window.DECK.prev(); });
     el.addEventListener('abuttondown', function(){ if(uiAction()) return; if(window.DECK) window.DECK.next(); });
     el.addEventListener('bbuttondown', function(){ if(window.DECK) window.DECK.prev(); });
@@ -524,17 +550,63 @@ AFRAME.registerComponent('ar-toggle', {
         if (e) e.setAttribute('visible', show);
       });
     }
+    var savedBg = null;
+    function passthrough(on){
+      var o = sc.object3D;
+      if(!o) return;
+      if(on){
+        if(savedBg === null) savedBg = o.background || false;
+        o.background = null;
+      } else if(savedBg !== null){
+        o.background = savedBg === false ? null : savedBg;
+      }
+      // fog e nevoa tambem escurecem o passthrough
+      if(on){ sc.removeAttribute('fog'); if(o) o.fog = null; }
+    }
     sc.addEventListener('enter-vr', function () {
-      // 'ar-mode' is set by A-Frame only for immersive-ar sessions
-      setEnv(!sc.is('ar-mode'));
+      var ar = sc.is('ar-mode');
+      setEnv(!ar);
+      passthrough(ar);
+      var hud = document.getElementById('logowrap');
+      if(hud) hud.setAttribute('visible', !ar);
     });
-    sc.addEventListener('exit-vr', function () { setEnv(true); });
+    sc.addEventListener('exit-vr', function () {
+      setEnv(true);
+      passthrough(false);
+      var hud = document.getElementById('logowrap');
+      if(hud) hud.setAttribute('visible', true);
+    });
   }
 });
 
 // ---------- Height fix for 'local' reference space ----------
 // With referenceSpaceType 'local', origin = initial head position, so
 // content authored at y=1.6 appears above the user. Raise the rig on entry.
+AFRAME.registerComponent('input-mode', {
+  init: function () {
+    var sc = this.el, timer = null, hasInput = false;
+    function gaze(on){
+      var c = document.getElementById('gazecursor');
+      if(!c) return;
+      c.setAttribute('visible', on);
+      c.setAttribute('raycaster', 'enabled', on);
+    }
+    function sawInput(){
+      hasInput = true;
+      clearTimeout(timer);
+      gaze(false);
+    }
+    sc.addEventListener('controllerconnected', sawInput);
+    sc.addEventListener('enter-vr', function () {
+      hasInput = false;
+      clearTimeout(timer);
+      // sem controle nem mao detectados em 2.5s -> selecao por olhar
+      timer = setTimeout(function () { if (!hasInput) gaze(true); }, 2500);
+    });
+    sc.addEventListener('exit-vr', function () { clearTimeout(timer); gaze(false); });
+  }
+});
+
 AFRAME.registerComponent('height-fix', {
   init: function () {
     var sc = this.el, rig = document.getElementById('rig');
@@ -1095,7 +1167,9 @@ window.addEventListener('error', function(ev){
       hideBootOverlay();
     }); }
   }
+  var arBtn = document.getElementById('btn-ar');
   vrBtn.addEventListener('click', function(){ if(window.AUDIO) window.AUDIO.start(); enter(false); });
+  if(arBtn) arBtn.addEventListener('click', function(){ if(window.AUDIO) window.AUDIO.start(); enter(true); });
   // hide entry UI once a session starts / show again on exit
   if(sc){
     sc.addEventListener('enter-vr', function(){ var x=document.getElementById('boot'); if(x) x.style.display='none'; });
@@ -1115,6 +1189,7 @@ window.addEventListener('error', function(ev){
     var arOk = res[0].status==='fulfilled' && res[0].value;
     var vrOk = res[1].status==='fulfilled' && res[1].value;
     window.__vrOk = !!vrOk; if(window.__tryEnable) window.__tryEnable();
+    if(arOk && arBtn && window.__assetsLoaded !== undefined){ arBtn.style.display='block'; }
     if(!vrOk){ status.textContent='Sem VR imersivo aqui — modo 3D pela tela.'; }
     else { status.textContent=''; }
   });
@@ -1201,6 +1276,13 @@ window.addEventListener('error', function(ev){
     sc.addEventListener('enter-vr', function(){ if(!sc.is('ar-mode')) apply(current); });
   } else { apply(current); }
 })();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
 </script>
 </body>
 </html>

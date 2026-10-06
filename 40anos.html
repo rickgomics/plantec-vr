@@ -6,6 +6,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#050510">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
 <title>Plantec · Jornada 40 Anos</title>
 <script src="assets/aframe.min.js"></script>
 <style>
@@ -27,12 +31,12 @@
   <img src="assets/logo.png" alt="Plantec">
   <h2>JORNADA 40 ANOS</h2>
   <button id="btn-vr" disabled>CARREGANDO&hellip;</button>
-  <p id="hint">Gatilho ou toque: avan&ccedil;ar esta&ccedil;&atilde;o &middot; A viagem &eacute; autom&aacute;tica</p>
+  <p id="hint">Gatilho, pin&ccedil;a com os dedos ou toque: avan&ccedil;ar esta&ccedil;&atilde;o &middot; A viagem &eacute; autom&aacute;tica</p>
   <p id="hint" style="opacity:.4">Trilha: "Legionnaire" &mdash; Scott Buckley (CC-BY 4.0)</p>
 </div>
 
 <a-scene background="color: #050510" renderer="antialias: true; colorManagement: true; exposure: 1.05"
-  webxr="referenceSpaceType: local; requiredFeatures: local"
+  webxr="referenceSpaceType: local; requiredFeatures: local; optionalFeatures: hand-tracking"
   vr-mode-ui="enabled: false" loading-screen="enabled: false" ride-controller>
 
   <a-assets timeout="30000">
@@ -75,6 +79,8 @@
     </a-camera>
     <a-entity laser-controls="hand: right" raycaster="objects: .clickable; far: 30; lineColor: #F5A800" skip-controller></a-entity>
     <a-entity laser-controls="hand: left"  raycaster="objects: .clickable; far: 30; lineColor: #F5A800" skip-controller></a-entity>
+    <a-entity hand-tracking-controls="hand: right; modelColor: #F5A800" skip-controller></a-entity>
+    <a-entity hand-tracking-controls="hand: left; modelColor: #00A99D" skip-controller></a-entity>
   </a-entity>
 </a-scene>
 
@@ -450,10 +456,15 @@ AFRAME.registerComponent('ride-controller', {
 AFRAME.registerComponent('skip-controller', {
   init: function () {
     var sc = this.el.sceneEl;
-    this.el.addEventListener('triggerdown', function () {
+    function go(){
+      var now = performance.now();
+      if (window.__lastSkip && now - window.__lastSkip < 450) return;
+      window.__lastSkip = now;
       var rc = sc.components['ride-controller'];
       if (rc && rc.skip) rc.skip();
-    });
+    }
+    this.el.addEventListener('triggerdown', go);
+    this.el.addEventListener('pinchstarted', go);
   }
 });
 
@@ -497,6 +508,13 @@ window.addEventListener('click', function (ev) {
     } else { begin(); }
   });
 })();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
 </script>
 </body>
 </html>

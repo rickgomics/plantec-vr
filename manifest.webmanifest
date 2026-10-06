@@ -1,0 +1,35 @@
+{
+  "name": "Plantec VR — Institucional 2026",
+  "short_name": "Plantec VR",
+  "description": "Apresentação institucional imersiva da Plantec e a Jornada 40 Anos, em realidade virtual.",
+  "id": "/plantec-vr/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "landscape",
+  "background_color": "#0a0812",
+  "theme_color": "#0a0812",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "categories": ["business", "education", "entertainment"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Apresentação Institucional",
+      "short_name": "Institucional",
+      "url": "./index.html",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Jornada 40 Anos",
+      "short_name": "40 Anos",
+      "url": "./40anos.html",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}
